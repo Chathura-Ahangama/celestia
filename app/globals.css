@@ -1,26 +1,727 @@
 @import "tailwindcss";
 
+/* ============================================
+   CELESTIA — Design System
+   ============================================ */
+
+/* ---------- DESIGN TOKENS ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --void: #050510;
+  --cosmos: #0a0a1a;
+  --nebula: #141428;
+  --stardust: #1e1e3a;
+
+  /* Text */
+  --starlight: #e8e4f0;
+  --moonbeam: #b8b0c8;
+  --celestial: #8888cc;
+
+  /* Accents */
+  --nova: #c8a050; /* Gold — zodiac symbols */
+  --ember: #e85040; /* Fire signs */
+  --ocean: #4088d0; /* Water signs */
+  --terra: #60a848; /* Earth signs */
+  --zephyr: #c8c040; /* Air signs */
+
+  /* Glass */
+  --glass-bg: rgba(20, 20, 50, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Sky gradient stops */
+  --sky-zenith: #0a0a1a;
+  --sky-mid: #0d0d24;
+  --sky-horizon: #141428;
+
+  /* Easing curves */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Spacing scale (8px base) */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-12: 96px;
+
+  /* Layout */
+  --max-width: 1200px;
+
+  /* Z-index layers */
+  --z-sky: 1;
+  --z-content: 10;
+  --z-overlay: 100;
+  --z-modal: 1000;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ---------- FONT FALLBACK VARIABLES ---------- */
+/* These get bound to next/font variables in layout.tsx.
+   Fallbacks here ensure nothing breaks before fonts load. */
+:root {
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-mono:
+    var(--font-mono-geist), "JetBrains Mono", ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ---------- RESET ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--void);
+  color: var(--starlight);
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+  /* Prevent flash of white before canvas paints */
+  min-height: 100vh;
+}
+
+/* Remove default focus outline, add custom */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 1px solid var(--celestial);
+  outline-offset: 3px;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(136, 136, 204, 0.3);
+  color: var(--starlight);
+}
+
+/* ---------- TYPOGRAPHY BASE ---------- */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--moonbeam);
+}
+
+/* ---------- APP SHELL ---------- */
+/* The sky canvas is ALWAYS fullscreen and fixed behind everything */
+.sky-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: var(--z-sky);
+  pointer-events: none;
+}
+
+/* UI content floats above */
+.content-layer {
+  position: relative;
+  z-index: var(--z-content);
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Utility: center everything in a full viewport section */
+.viewport-center {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  width: 100%;
+}
+
+/* ---------- SHARED ANIMATIONS ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cosmic heartbeat — used in reveal void phase */
+@keyframes cosmicPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.002);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Breathing chevron scroll indicator */
+@keyframes breatheDown {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.9;
+  }
+}
+
+/* Title letter flash after landing */
+@keyframes titleFlash {
+  0% {
+    filter: brightness(1);
+  }
+  40% {
+    filter: brightness(1.35);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+/* Glass card entrance (also driven by framer-motion, this is a fallback) */
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- GLASS SURFACE UTILITY ---------- */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border-radius: 20px;
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- ELEMENT COLOR MODIFIERS ---------- */
+.element-fire {
+  --element-color: var(--ember);
+}
+.element-water {
+  --element-color: var(--ocean);
+}
+.element-earth {
+  --element-color: var(--terra);
+}
+.element-air {
+  --element-color: var(--zephyr);
+}
+
+/* ---------- SCROLLBAR (subtle) ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 204, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(136, 136, 204, 0.4);
+}
+
+/* ---------- REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- RESPONSIVE FONT SCALING ---------- */
+@media (max-width: 767px) {
+  :root {
+    --space-4: 24px;
+    --space-6: 32px;
+    --space-8: 48px;
+  }
+}
+
+/* ---------- LANDING HERO ---------- */
+.landing-hero {
+  position: relative;
+  text-align: center;
+  user-select: none;
+  cursor: default;
+}
+
+.landing-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 12vw, 8rem);
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  line-height: 1.1;
+  color: var(--starlight);
+  margin-bottom: var(--space-3);
+  display: flex;
+  justify-content: center;
+}
+
+.landing-letter {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+.landing-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+  color: var(--moonbeam);
+  letter-spacing: 0.12em;
+  font-weight: 300;
+  margin-bottom: var(--space-8);
+  max-width: 32ch;
+}
+
+.landing-chevron {
+  background: none;
+  border: none;
+  color: var(--moonbeam);
+  cursor: pointer;
+  padding: var(--space-2);
+  animation: breatheDown 2.4s ease-in-out infinite;
+  transition: color 0.3s ease;
+  position: absolute;
+  bottom: var(--space-6);
+}
+
+.landing-chevron:hover {
+  color: var(--starlight);
+}
+
+.landing-chevron:focus-visible {
+  outline: 1px solid var(--celestial);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@media (max-width: 767px) {
+  .landing-title {
+    letter-spacing: 0.15em;
+  }
+
+  .landing-subtitle {
+    letter-spacing: 0.08em;
+  }
+}
+
+/* ---------- BIRTH FORM ---------- */
+.birth-form {
+  width: min(480px, 92vw);
+  padding: var(--space-6) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.birth-form-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-align: center;
+  color: var(--starlight);
+}
+
+.birth-form-subtitle {
+  font-size: 0.88rem;
+  color: var(--moonbeam);
+  text-align: center;
+  letter-spacing: 0.04em;
+  margin-top: calc(var(--space-1) * -1);
+}
+
+.birth-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.birth-form-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--celestial);
+}
+
+.birth-form-field-label {
+  font-size: 0.65rem;
+  color: var(--moonbeam);
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.birth-form-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+
+.birth-form-date-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 0.8fr;
+  gap: var(--space-2);
+}
+
+.birth-form-time-row {
+  align-items: flex-end;
+}
+
+.birth-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Shared input / select styles */
+.birth-form-select,
+.birth-form-input {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--starlight);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 10px 14px;
+  transition: border-color 0.25s ease, background 0.25s ease;
+  width: 100%;
+}
+
+.birth-form-select:focus,
+.birth-form-input:focus {
+  border-color: rgba(136, 136, 204, 0.4);
+  background: rgba(255, 255, 255, 0.07);
+  outline: none;
+}
+
+.birth-form-select:hover,
+.birth-form-input:hover {
+  border-color: rgba(136, 136, 204, 0.25);
+}
+
+/* Select arrow indicator */
+.birth-form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238888cc' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+/* Select dropdown styling (Webkit) */
+.birth-form-select option {
+  background: #1e1e3a;
+  color: var(--starlight);
+}
+
+.birth-form-colon {
+  font-size: 1.4rem;
+  color: var(--moonbeam);
+  padding-bottom: 6px;
+  line-height: 1;
+}
+
+/* AM/PM toggle */
+.birth-form-ampm {
+  display: flex;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-left: var(--space-1);
+}
+
+.birth-form-ampm-btn {
+  background: transparent;
+  border: none;
+  color: var(--moonbeam);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.birth-form-ampm-btn.active {
+  background: rgba(136, 136, 204, 0.15);
+  color: var(--starlight);
+}
+
+.birth-form-ampm-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* City autocomplete wrapper */
+.birth-form-city-wrapper {
+  position: relative;
+}
+
+.birth-form-input {
+  width: 100%;
+}
+
+.birth-form-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  list-style: none;
+  background: rgba(20, 20, 50, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: var(--z-overlay);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.birth-form-suggestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.birth-form-suggestion:hover,
+.birth-form-suggestion.highlighted {
+  background: rgba(136, 136, 204, 0.12);
+}
+
+.suggestion-name {
+  font-size: 0.9rem;
+  color: var(--starlight);
+}
+
+.suggestion-meta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--moonbeam);
+  opacity: 0.6;
+}
+
+.birth-form-city-confirm {
+  font-size: 0.78rem;
+  color: var(--celestial);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* Submit button */
+.birth-form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  padding: 14px var(--space-4);
+  margin-top: var(--space-2);
+  border: 1px solid rgba(200, 160, 80, 0.3);
+  border-radius: 14px;
+  background: rgba(200, 160, 80, 0.06);
+  color: var(--nova);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  font-weight: 400;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
+}
+
+.birth-form-submit:hover:not(:disabled) {
+  background: rgba(200, 160, 80, 0.12);
+  border-color: rgba(200, 160, 80, 0.5);
+  box-shadow: 0 0 30px rgba(200, 160, 80, 0.08);
+  transform: translateY(-1px);
+}
+
+.birth-form-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.birth-form-submit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.birth-form-submit-icon {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.birth-form-submit:hover:not(:disabled) .birth-form-submit-icon {
+  opacity: 1;
+}
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .birth-form {
+    padding: var(--space-4) var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .birth-form-date-row {
+    grid-template-columns: 1fr 1fr 0.7fr;
+  }
+
+  .birth-form-ampm-btn {
+    padding: 10px 10px;
+  }
+}
+
+/* ---------- IRIS APERTURE TRANSITION ---------- */
+
+/* Submit button ring SVG — hidden by default, revealed on iris */
+.birth-form-submit {
+  position: relative;
+  overflow: hidden;
+}
+
+.birth-form-submit-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.iris-ring-path {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  transition: stroke-dashoffset 0.6s var(--ease-out-expo);
+}
+
+/* When iris is active: show and animate the ring */
+.birth-form-submit.iris-active .birth-form-submit-ring {
+  opacity: 1;
+}
+
+.birth-form-submit.iris-active .iris-ring-path {
+  stroke-dashoffset: 0;
+}
+
+.birth-form-submit.iris-active {
+  border-color: rgba(200, 160, 80, 0.5);
+  box-shadow: 0 0 40px rgba(200, 160, 80, 0.15);
+}
+
+.birth-form-submit.iris-active .birth-form-submit-text {
+  animation: submitTextPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes submitTextPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Full-screen iris overlay */
+.iris-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  pointer-events: none;
+  background: var(--void);
+}
+
+/* Phase: gather — invisible, waiting */
+.iris-overlay.iris-gather {
+  opacity: 0;
+}
+
+/* Phase: expand — circle grows from button center */
+.iris-overlay.iris-expand {
+  opacity: 1;
+  clip-path: circle(0% at var(--iris-x) var(--iris-y));
+  animation: irisExpand 0.8s var(--ease-out-expo) forwards;
+}
+
+@keyframes irisExpand {
+  from {
+    clip-path: circle(0% at var(--iris-x) var(--iris-y));
+  }
+  to {
+    clip-path: circle(150% at var(--iris-x) var(--iris-y));
+  }
+}
+
+/* Phase: hold — fully covered, brief darkness */
+.iris-overlay.iris-hold {
+  opacity: 1;
+  clip-path: circle(150% at var(--iris-x) var(--iris-y));
+}
+
+/* Phase: done — stays opaque until next component mounts */
+.iris-overlay.iris-done {
+  opacity: 1;
+  clip-path: circle(150% at var(--iris-x) var(--iris-y));
 }
