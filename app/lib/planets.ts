@@ -1,11 +1,13 @@
 /* ============================================
-   CELESTIA — Planetary Positions (simplified)
-   Keplerian elements (J2000) → heliocentric →
-   geocentric ecliptic → equatorial. ±1° accuracy.
+   CELESTIA — Planetary Positions & Solar System
+   Keplerian orbital elements (J2000) → heliocentric →
+   geocentric ecliptic → equatorial. Complete 8-planet
+   system + Pluto with apparent visual magnitude.
    ============================================ */
 
 import {
   DEG2RAD,
+  RAD2DEG,
   normalizeDeg,
   sind,
   cosd,
@@ -15,16 +17,28 @@ import {
   eclipticToEquatorial,
   type EquatorialCoord,
 } from "./astronomy";
+import meteorShowersData from "../data/meteorShowers.json";
 
-export type PlanetName = "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
+export type PlanetName =
+  | "Mercury"
+  | "Venus"
+  | "Mars"
+  | "Jupiter"
+  | "Saturn"
+  | "Uranus"
+  | "Neptune"
+  | "Pluto";
 
-/** Distinct render colors per planet (spec: distinctly colored dots). */
+/** Distinct render colors per planet */
 export const PLANET_COLOR: Record<PlanetName, string> = {
-  Mercury: "#b0b0b0",
-  Venus: "#f5e8c0",
+  Mercury: "#b5b5b5",
+  Venus: "#f7ecc8",
   Mars: "#e06040",
   Jupiter: "#e8c890",
-  Saturn: "#d8c078",
+  Saturn: "#dfc688",
+  Uranus: "#8ce0e8",
+  Neptune: "#5a88e8",
+  Pluto: "#c4a896",
 };
 
 /** Keplerian orbital elements at J2000 + rates per Julian century. */
@@ -43,7 +57,7 @@ interface Elements {
   dOmega: number; // longitude of ascending node (deg)
 }
 
-/** Standard J2000 elements (NASA/JPL approximate). Includes Earth. */
+/** Standard J2000 elements (NASA/JPL approximate). */
 const ELEMENTS: Record<PlanetName | "Earth", Elements> = {
   Mercury: {
     a: 0.38709927,
@@ -129,13 +143,74 @@ const ELEMENTS: Record<PlanetName | "Earth", Elements> = {
     Omega: 113.66242448,
     dOmega: -0.28867794,
   },
+  Uranus: {
+    a: 19.18916464,
+    da: -0.00196176,
+    e: 0.04725744,
+    de: -0.00004397,
+    I: 0.77263783,
+    dI: -0.00180155,
+    L: 314.05500511,
+    dL: 429.8640561,
+    wbar: 170.9542763,
+    dwbar: 0.40805281,
+    Omega: 74.01692503,
+    dOmega: 0.05234614,
+  },
+  Neptune: {
+    a: 30.06992276,
+    da: 0.00026291,
+    e: 0.00860619,
+    de: 0.0000215,
+    I: 1.77004347,
+    dI: 0.000224,
+    L: 304.348665,
+    dL: 219.8833092,
+    wbar: 46.727364,
+    dwbar: -0.112422,
+    Omega: 131.78422574,
+    dOmega: -0.006165,
+  },
+  Pluto: {
+    a: 39.48211675,
+    da: -0.00031596,
+    e: 0.2488273,
+    de: 0.0000517,
+    I: 17.14001206,
+    dI: 0.00004818,
+    L: 238.92903833,
+    dL: 145.20780515,
+    wbar: 224.06876,
+    dwbar: -0.040629,
+    Omega: 110.3039368,
+    dOmega: -0.008099,
+  },
 };
 
-const PLANETS: PlanetName[] = ["Mercury", "Venus", "Mars", "Jupiter", "Saturn"];
+export const VISIBLE_PLANETS: PlanetName[] = [
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+];
+
+export const ALL_PLANET_NAMES: PlanetName[] = [
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+  "Pluto",
+];
 
 /**
  * Solve Kepler's equation M = E - e·sin(E) for eccentric anomaly E.
- * Newton–Raphson, radians in/out. Converges in a few iterations.
+ * Newton–Raphson, radians in/out.
  */
 function solveKepler(M: number, e: number): number {
   let E = M + e * Math.sin(M);
@@ -149,7 +224,7 @@ function solveKepler(M: number, e: number): number {
 
 /**
  * Compute a planet's heliocentric ecliptic rectangular coords (J2000 frame)
- * at the given Julian Date. Returns {x, y, z} in AU.
+ * at the given Julian Date. Returns {x, y, z, r} in AU.
  */
 function heliocentric(
   name: PlanetName | "Earth",
@@ -158,6 +233,7 @@ function heliocentric(
   x: number;
   y: number;
   z: number;
+  r: number;
 } {
   const T = daysSinceJ2000(jd) / 36525.0; // Julian centuries
   const el = ELEMENTS[name];
@@ -169,20 +245,16 @@ function heliocentric(
   const wbar = el.wbar + el.dwbar * T;
   const Omega = el.Omega + el.dOmega * T;
 
-  // Argument of perihelion & mean anomaly
   const w = wbar - Omega;
   let M = normalizeDeg(L - wbar);
-  // fold to [-180,180] for Kepler
   if (M > 180) M -= 360;
 
   const Mrad = M * DEG2RAD;
-  const E = solveKepler(Mrad, e); // radians
+  const E = solveKepler(Mrad, e);
 
-  // Position in orbital plane
   const xp = a * (Math.cos(E) - e);
   const yp = a * Math.sqrt(1 - e * e) * Math.sin(E);
 
-  // Rotate into J2000 ecliptic frame
   const cosw = cosd(w),
     sinw = sind(w);
   const cosO = cosd(Omega),
@@ -198,7 +270,44 @@ function heliocentric(
     (-sinw * sinO + cosw * cosO * cosI) * yp;
   const z = sinw * sinI * xp + cosw * sinI * yp;
 
-  return { x, y, z };
+  const r = Math.sqrt(x * x + y * y + z * z);
+  return { x, y, z, r };
+}
+
+/**
+ * Calculate visual apparent magnitude of a planet (Meeus standard formulae).
+ */
+export function calculatePlanetMagnitude(
+  name: PlanetName,
+  r: number,
+  delta: number,
+  rEarth: number,
+): number {
+  // Phase angle i (angle Sun-Planet-Earth)
+  const cosI = (r * r + delta * delta - rEarth * rEarth) / (2 * r * delta);
+  const iDeg = Math.acos(Math.max(-1, Math.min(1, cosI))) * RAD2DEG;
+  const logTerm = 5 * Math.log10(Math.max(0.01, r * delta));
+
+  switch (name) {
+    case "Mercury":
+      return -0.42 + logTerm + 0.038 * iDeg - 0.000273 * iDeg * iDeg + 0.000002 * Math.pow(iDeg, 3);
+    case "Venus":
+      return -4.4 + logTerm + 0.0009 * iDeg + 0.000239 * iDeg * iDeg - 0.00000065 * Math.pow(iDeg, 3);
+    case "Mars":
+      return -1.52 + logTerm + 0.016 * iDeg;
+    case "Jupiter":
+      return -9.4 + logTerm + 0.005 * iDeg;
+    case "Saturn":
+      return -8.88 + logTerm + 0.044 * iDeg;
+    case "Uranus":
+      return -7.19 + logTerm;
+    case "Neptune":
+      return -6.87 + logTerm;
+    case "Pluto":
+      return -1.0 + logTerm + 0.04 * iDeg;
+    default:
+      return 0.0;
+  }
 }
 
 export interface PlanetPosition {
@@ -211,12 +320,14 @@ export interface PlanetPosition {
   equatorial: EquatorialCoord;
   /** Distance from Earth in AU. */
   distanceAU: number;
+  /** Distance from Sun in AU. */
+  distanceSunAU: number;
+  /** Apparent visual magnitude. */
+  mag: number;
 }
 
 /**
  * Geocentric equatorial position of a single planet.
- * Subtracts Earth's heliocentric vector, converts to ecliptic lon/lat,
- * then to RA/Dec.
  */
 export function getPlanetPosition(
   name: PlanetName,
@@ -239,6 +350,8 @@ export function getPlanetPosition(
     jd,
   );
 
+  const mag = calculatePlanetMagnitude(name, p.r, distanceAU, earth.r);
+
   return {
     name,
     color: PLANET_COLOR[name],
@@ -246,10 +359,79 @@ export function getPlanetPosition(
     eclipticLat,
     equatorial,
     distanceAU,
+    distanceSunAU: p.r,
+    mag: Math.round(mag * 10) / 10,
   };
 }
 
-/** All five visible planets at a given JD. */
+/** All visible planets at a given JD. */
 export function getAllPlanets(jd: number): PlanetPosition[] {
-  return PLANETS.map((name) => getPlanetPosition(name, jd));
+  return VISIBLE_PLANETS.map((name) => getPlanetPosition(name, jd));
+}
+
+export interface MeteorShower {
+  id: string;
+  name: string;
+  peakMonth: number;
+  peakDay: number;
+  startMonth: number;
+  startDay: number;
+  endMonth: number;
+  endDay: number;
+  radiant: EquatorialCoord;
+  constellation: string;
+  zhr: number;
+  velocity: number;
+  parent: string;
+  description: string;
+  /** Activity status at birth date */
+  isPeak: boolean;
+  daysFromPeak: number;
+}
+
+/**
+ * Check which major meteor showers are active for a given birth calendar date.
+ */
+export function getActiveMeteorShowers(
+  month: number,
+  day: number,
+): MeteorShower[] {
+  const active: MeteorShower[] = [];
+  const birthDayOfYear = getDayOfYear(month, day);
+
+  for (const shower of meteorShowersData) {
+    const startDOY = getDayOfYear(shower.startMonth, shower.startDay);
+    const endDOY = getDayOfYear(shower.endMonth, shower.endDay);
+    const peakDOY = getDayOfYear(shower.peakMonth, shower.peakDay);
+
+    let isActive = false;
+    if (startDOY <= endDOY) {
+      isActive = birthDayOfYear >= startDOY && birthDayOfYear <= endDOY;
+    } else {
+      // wraps around Dec/Jan (like Quadrantids)
+      isActive = birthDayOfYear >= startDOY || birthDayOfYear <= endDOY;
+    }
+
+    if (isActive) {
+      let diff = Math.abs(birthDayOfYear - peakDOY);
+      if (diff > 180) diff = 365 - diff;
+      active.push({
+        ...shower,
+        isPeak: diff <= 2,
+        daysFromPeak: diff,
+      });
+    }
+  }
+
+  active.sort((a, b) => a.daysFromPeak - b.daysFromPeak);
+  return active;
+}
+
+function getDayOfYear(month: number, day: number): number {
+  const daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let doy = 0;
+  for (let m = 1; m < month; m++) {
+    doy += daysInMonth[m];
+  }
+  return doy + day;
 }

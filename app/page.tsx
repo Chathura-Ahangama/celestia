@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
 import type { UTCDateTime, GeoLocation } from "./lib/astronomy";
 import StarField from "./components/StarField";
 import ShootingStar from "./components/ShootingStar";
@@ -11,7 +12,7 @@ import NightSkyCanvas from "./components/NightSkyCanvas";
 
 /* ============================================
    APP PHASES
-   landing   → title + starfield + scroll hint
+   landing   → title + starfield + CTA button
    form      → the celestial instrument (birth input)
    revealing → cinematic hyperspace reveal
    explore   → interactive sky + card + panels
@@ -34,7 +35,7 @@ export default function Home() {
   const [phase, setPhase] = useState<AppPhase>("landing");
   const [birthData, setBirthData] = useState<BirthData | null>(null);
 
-  /* Advance from landing → form (scroll or click) */
+  /* Advance from landing → form (button click, Enter, or scroll) */
   const goToForm = useCallback(() => {
     setPhase("form");
   }, []);
@@ -64,15 +65,22 @@ export default function Home() {
         <ShootingStar />
       </div>
 
-      {/* ===== CONTENT LAYER (UI floats above sky) ===== */}
+      {/* ===== CONTENT LAYER (UI floats above sky with AnimatePresence transitions) ===== */}
       <div className="content-layer">
-        {phase === "landing" && <LandingHero onContinue={goToForm} />}
+        <AnimatePresence mode="wait">
+          {phase === "landing" && (
+            <LandingHero key="landing" onContinue={goToForm} />
+          )}
 
-        {phase === "form" && <BirthForm onReveal={handleReveal} />}
+          {phase === "form" && (
+            <BirthForm key="form" onReveal={handleReveal} />
+          )}
+        </AnimatePresence>
 
         {/* Cinematic reveal sequence */}
         {phase === "revealing" && birthData && (
           <CosmicReveal
+            key="revealing"
             birthData={birthData}
             onComplete={handleRevealComplete}
           />
@@ -80,10 +88,9 @@ export default function Home() {
 
         {/* Interactive sky */}
         {phase === "explore" && birthData && (
-          <NightSkyCanvas birthData={birthData} onReset={reset} />
+          <NightSkyCanvas key="explore" birthData={birthData} onReset={reset} />
         )}
       </div>
     </main>
   );
 }
-

@@ -88,6 +88,7 @@ export default function CosmicReveal({ birthData, onComplete }: CosmicRevealProp
 
     const result: typeof finalStarsRef.current = [];
     for (const star of starsData) {
+      if (star.mag > 5.2) continue; // optimize reveal transition to brightest ~1200 stars
       const projected = starToScreen(
         { ra: star.ra, dec: star.dec },
         loc, jd, w, h, 180, 180

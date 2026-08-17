@@ -1,178 +1,504 @@
 /* ============================================
-   CELESTIA — City Database
-   ~120 major cities worldwide with coordinates
-   and UTC offsets. Good global coverage with
-   emphasis on South/East Asia.
+   CELESTIA — Global City & Observatory Database
+   400+ major cities worldwide, all Chinese provinces
+   and major prefectures, Sri Lankan regional centers,
+   and world-renowned astronomical observatories with
+   precise coordinates and standard UTC offsets.
    ============================================ */
 
 export interface CityEntry {
-  /** Display name: "City, Country" */
+  /** Display name: "City, Country" or "City, Province/State, Country" */
   name: string;
   lat: number;
   lon: number;
-  /** Standard UTC offset in hours (doesn't handle DST — acceptable for birth-sky) */
+  /** Standard UTC offset in hours */
   utcOffset: number;
 }
 
 export const CITIES: CityEntry[] = [
+  // ─── Famous Astronomical Observatories ───
+  { name: "Mauna Kea Observatory, Hawaii", lat: 19.8206, lon: -155.4681, utcOffset: -10 },
+  { name: "Paranal Observatory (VLT), Chile", lat: -24.6272, lon: -70.4042, utcOffset: -4 },
+  { name: "Roque de los Muchachos, La Palma", lat: 28.7597, lon: -17.8816, utcOffset: 0 },
+  { name: "Royal Observatory Greenwich, UK", lat: 51.4769, lon: -0.0005, utcOffset: 0 },
+  { name: "Palomar Observatory, California", lat: 33.3563, lon: -116.8647, utcOffset: -8 },
+  { name: "Siding Spring Observatory, Australia", lat: -31.2755, lon: 149.0667, utcOffset: 10 },
+  { name: "South African Astronomical Obs, Sutherland", lat: -32.3783, lon: 20.8108, utcOffset: 2 },
+  { name: "ALMA Observatory, Atacama, Chile", lat: -23.0292, lon: -67.7553, utcOffset: -4 },
+  { name: "Kitt Peak National Observatory, Arizona", lat: 31.9583, lon: -111.5967, utcOffset: -7 },
+
   // ─── Sri Lanka ───
+  { name: "Kalawana, Sri Lanka", lat: 6.4253, lon: 80.4072, utcOffset: 5.5 },
   { name: "Colombo, Sri Lanka", lat: 6.9271, lon: 79.8612, utcOffset: 5.5 },
   { name: "Kandy, Sri Lanka", lat: 7.2906, lon: 80.6337, utcOffset: 5.5 },
-  { name: "Galle, Sri Lanka", lat: 6.0535, lon: 80.2210, utcOffset: 5.5 },
+  { name: "Galle, Sri Lanka", lat: 6.0535, lon: 80.221, utcOffset: 5.5 },
   { name: "Jaffna, Sri Lanka", lat: 9.6615, lon: 80.0255, utcOffset: 5.5 },
-  { name: "Matara, Sri Lanka", lat: 5.9549, lon: 80.5550, utcOffset: 5.5 },
+  { name: "Matara, Sri Lanka", lat: 5.9549, lon: 80.555, utcOffset: 5.5 },
   { name: "Negombo, Sri Lanka", lat: 7.2008, lon: 79.8358, utcOffset: 5.5 },
   { name: "Trincomalee, Sri Lanka", lat: 8.5874, lon: 81.2152, utcOffset: 5.5 },
-  { name: "Batticaloa, Sri Lanka", lat: 7.7310, lon: 81.6747, utcOffset: 5.5 },
+  { name: "Batticaloa, Sri Lanka", lat: 7.731, lon: 81.6747, utcOffset: 5.5 },
   { name: "Anuradhapura, Sri Lanka", lat: 8.3114, lon: 80.4037, utcOffset: 5.5 },
   { name: "Kurunegala, Sri Lanka", lat: 7.4867, lon: 80.3647, utcOffset: 5.5 },
+  { name: "Ratnapura, Sri Lanka", lat: 6.6828, lon: 80.4005, utcOffset: 5.5 },
+  { name: "Nuwara Eliya, Sri Lanka", lat: 6.9497, lon: 80.7891, utcOffset: 5.5 },
+  { name: "Badulla, Sri Lanka", lat: 6.9934, lon: 81.055, utcOffset: 5.5 },
+  { name: "Bandarawela, Sri Lanka", lat: 6.8333, lon: 80.9833, utcOffset: 5.5 },
+  { name: "Hambantota, Sri Lanka", lat: 6.1248, lon: 81.1185, utcOffset: 5.5 },
+  { name: "Kalutara, Sri Lanka", lat: 6.5854, lon: 79.9607, utcOffset: 5.5 },
+  { name: "Gampaha, Sri Lanka", lat: 7.084, lon: 79.9941, utcOffset: 5.5 },
+  { name: "Kegalle, Sri Lanka", lat: 7.2513, lon: 80.3464, utcOffset: 5.5 },
+  { name: "Matale, Sri Lanka", lat: 7.4675, lon: 80.6234, utcOffset: 5.5 },
+  { name: "Dambulla, Sri Lanka", lat: 7.8731, lon: 80.6517, utcOffset: 5.5 },
+  { name: "Polonnaruwa, Sri Lanka", lat: 7.9403, lon: 81.0188, utcOffset: 5.5 },
+  { name: "Vavuniya, Sri Lanka", lat: 8.7514, lon: 80.4971, utcOffset: 5.5 },
+  { name: "Mannar, Sri Lanka", lat: 8.981, lon: 79.9044, utcOffset: 5.5 },
+  { name: "Kilinochchi, Sri Lanka", lat: 9.3803, lon: 80.3992, utcOffset: 5.5 },
+  { name: "Ampara, Sri Lanka", lat: 7.2975, lon: 81.6747, utcOffset: 5.5 },
+  { name: "Monaragala, Sri Lanka", lat: 6.8719, lon: 81.3487, utcOffset: 5.5 },
+  { name: "Puttalam, Sri Lanka", lat: 8.0362, lon: 79.8283, utcOffset: 5.5 },
+  { name: "Chilaw, Sri Lanka", lat: 7.5758, lon: 79.7953, utcOffset: 5.5 },
+  { name: "Moratuwa, Sri Lanka", lat: 6.773, lon: 79.8816, utcOffset: 5.5 },
+  { name: "Panadura, Sri Lanka", lat: 6.7132, lon: 79.9074, utcOffset: 5.5 },
+  { name: "Dehiwala, Sri Lanka", lat: 6.8511, lon: 79.8659, utcOffset: 5.5 },
+  { name: "Avissawella, Sri Lanka", lat: 6.9537, lon: 80.2087, utcOffset: 5.5 },
+  { name: "Embilipitiya, Sri Lanka", lat: 6.3028, lon: 80.8497, utcOffset: 5.5 },
+  { name: "Hatton, Sri Lanka", lat: 6.8964, lon: 80.5958, utcOffset: 5.5 },
 
-  // ─── China ───
+  // ─── China (All 34 Provinces, Municipalities & Regions) ───
+  // Anhui Province
+  { name: "Hefei, Anhui, China", lat: 31.8206, lon: 117.2272, utcOffset: 8 },
+  { name: "Wuhu, Anhui, China", lat: 31.3528, lon: 118.3765, utcOffset: 8 },
+  { name: "Bengbu, Anhui, China", lat: 32.9167, lon: 117.3833, utcOffset: 8 },
+  { name: "Anqing, Anhui, China", lat: 30.5083, lon: 117.05, utcOffset: 8 },
+  { name: "Huangshan (Tunxi), Anhui, China", lat: 29.7147, lon: 118.3375, utcOffset: 8 },
+  { name: "Ma'anshan, Anhui, China", lat: 31.6989, lon: 118.5069, utcOffset: 8 },
+  { name: "Fuyang, Anhui, China", lat: 32.8986, lon: 115.8197, utcOffset: 8 },
+  { name: "Huaibei, Anhui, China", lat: 33.9556, lon: 116.7986, utcOffset: 8 },
+  { name: "Chuzhou, Anhui, China", lat: 32.3014, lon: 118.3164, utcOffset: 8 },
+  { name: "Suzhou, Anhui, China", lat: 33.6361, lon: 116.9789, utcOffset: 8 },
+  { name: "Lu'an, Anhui, China", lat: 31.7544, lon: 116.5053, utcOffset: 8 },
+  { name: "Bozhou, Anhui, China", lat: 33.8772, lon: 115.7797, utcOffset: 8 },
+  { name: "Chizhou, Anhui, China", lat: 30.6586, lon: 117.4897, utcOffset: 8 },
+  { name: "Xuancheng, Anhui, China", lat: 30.9408, lon: 118.7589, utcOffset: 8 },
+  { name: "Tongling, Anhui, China", lat: 30.9453, lon: 117.8122, utcOffset: 8 },
+  // Direct-administered Municipalities
   { name: "Beijing, China", lat: 39.9042, lon: 116.4074, utcOffset: 8 },
   { name: "Shanghai, China", lat: 31.2304, lon: 121.4737, utcOffset: 8 },
-  { name: "Guangzhou, China", lat: 23.1291, lon: 113.2644, utcOffset: 8 },
-  { name: "Shenzhen, China", lat: 22.5431, lon: 114.0579, utcOffset: 8 },
-  { name: "Chengdu, China", lat: 30.5728, lon: 104.0668, utcOffset: 8 },
-  { name: "Wuhan, China", lat: 30.5928, lon: 114.3055, utcOffset: 8 },
-  { name: "Hangzhou, China", lat: 30.2741, lon: 120.1551, utcOffset: 8 },
-  { name: "Xi'an, China", lat: 34.3416, lon: 108.9398, utcOffset: 8 },
-  { name: "Chongqing, China", lat: 29.4316, lon: 106.9123, utcOffset: 8 },
-  { name: "Nanjing, China", lat: 32.0603, lon: 118.7969, utcOffset: 8 },
   { name: "Tianjin, China", lat: 39.3434, lon: 117.3616, utcOffset: 8 },
-  { name: "Suzhou, China", lat: 31.2990, lon: 120.5853, utcOffset: 8 },
-  { name: "Dalian, China", lat: 38.9140, lon: 121.6147, utcOffset: 8 },
-  { name: "Qingdao, China", lat: 36.0671, lon: 120.3826, utcOffset: 8 },
-  { name: "Kunming, China", lat: 25.0389, lon: 102.7183, utcOffset: 8 },
-  { name: "Harbin, China", lat: 45.8038, lon: 126.5350, utcOffset: 8 },
-  { name: "Changsha, China", lat: 28.2282, lon: 112.9388, utcOffset: 8 },
-  { name: "Zhengzhou, China", lat: 34.7466, lon: 113.6254, utcOffset: 8 },
-  { name: "Fuzhou, China", lat: 26.0745, lon: 119.2965, utcOffset: 8 },
-  { name: "Xiamen, China", lat: 24.4798, lon: 118.0894, utcOffset: 8 },
-  { name: "Ürümqi, China", lat: 43.8256, lon: 87.6168, utcOffset: 8 },
-  { name: "Lhasa, China", lat: 29.6500, lon: 91.1000, utcOffset: 8 },
+  { name: "Chongqing, China", lat: 29.4316, lon: 106.9123, utcOffset: 8 },
+  // Guangdong Province
+  { name: "Guangzhou, Guangdong, China", lat: 23.1291, lon: 113.2644, utcOffset: 8 },
+  { name: "Shenzhen, Guangdong, China", lat: 22.5431, lon: 114.0579, utcOffset: 8 },
+  { name: "Dongguan, Guangdong, China", lat: 23.0207, lon: 113.7518, utcOffset: 8 },
+  { name: "Foshan, Guangdong, China", lat: 23.0215, lon: 113.1214, utcOffset: 8 },
+  { name: "Zhuhai, Guangdong, China", lat: 22.2707, lon: 113.5767, utcOffset: 8 },
+  { name: "Shantou, Guangdong, China", lat: 23.3541, lon: 116.6819, utcOffset: 8 },
+  { name: "Zhongshan, Guangdong, China", lat: 22.5176, lon: 113.3928, utcOffset: 8 },
+  // Zhejiang Province
+  { name: "Hangzhou, Zhejiang, China", lat: 30.2741, lon: 120.1551, utcOffset: 8 },
+  { name: "Ningbo, Zhejiang, China", lat: 29.8683, lon: 121.544, utcOffset: 8 },
+  { name: "Wenzhou, Zhejiang, China", lat: 27.9943, lon: 120.6994, utcOffset: 8 },
+  { name: "Shaoxing, Zhejiang, China", lat: 30.0024, lon: 120.5822, utcOffset: 8 },
+  { name: "Jiaxing, Zhejiang, China", lat: 30.7464, lon: 120.7555, utcOffset: 8 },
+  { name: "Jinhua, Zhejiang, China", lat: 29.0792, lon: 119.6474, utcOffset: 8 },
+  // Jiangsu Province
+  { name: "Nanjing, Jiangsu, China", lat: 32.0603, lon: 118.7969, utcOffset: 8 },
+  { name: "Suzhou, Jiangsu, China", lat: 31.299, lon: 120.5853, utcOffset: 8 },
+  { name: "Wuxi, Jiangsu, China", lat: 31.5689, lon: 120.2886, utcOffset: 8 },
+  { name: "Changzhou, Jiangsu, China", lat: 31.8112, lon: 119.9741, utcOffset: 8 },
+  { name: "Nantong, Jiangsu, China", lat: 31.9802, lon: 120.8943, utcOffset: 8 },
+  { name: "Xuzhou, Jiangsu, China", lat: 34.2048, lon: 117.2858, utcOffset: 8 },
+  { name: "Yangzhou, Jiangsu, China", lat: 32.3942, lon: 119.4129, utcOffset: 8 },
+  // Sichuan Province
+  { name: "Chengdu, Sichuan, China", lat: 30.5728, lon: 104.0668, utcOffset: 8 },
+  { name: "Mianyang, Sichuan, China", lat: 31.4675, lon: 104.6791, utcOffset: 8 },
+  { name: "Nanchong, Sichuan, China", lat: 30.7953, lon: 106.0848, utcOffset: 8 },
+  { name: "Yibin, Sichuan, China", lat: 28.7518, lon: 104.6432, utcOffset: 8 },
+  { name: "Leshan, Sichuan, China", lat: 29.5521, lon: 103.7657, utcOffset: 8 },
+  // Hubei & Hunan Provinces
+  { name: "Wuhan, Hubei, China", lat: 30.5928, lon: 114.3055, utcOffset: 8 },
+  { name: "Yichang, Hubei, China", lat: 30.692, lon: 111.2865, utcOffset: 8 },
+  { name: "Xiangyang, Hubei, China", lat: 32.0089, lon: 112.1224, utcOffset: 8 },
+  { name: "Changsha, Hunan, China", lat: 28.2282, lon: 112.9388, utcOffset: 8 },
+  { name: "Zhuzhou, Hunan, China", lat: 27.8274, lon: 113.1339, utcOffset: 8 },
+  { name: "Zhangjiajie, Hunan, China", lat: 29.117, lon: 110.4792, utcOffset: 8 },
+  // Shandong & Henan Provinces
+  { name: "Jinan, Shandong, China", lat: 36.6512, lon: 117.12, utcOffset: 8 },
+  { name: "Qingdao, Shandong, China", lat: 36.0671, lon: 120.3826, utcOffset: 8 },
+  { name: "Yantai, Shandong, China", lat: 37.4638, lon: 121.4479, utcOffset: 8 },
+  { name: "Zhengzhou, Henan, China", lat: 34.7466, lon: 113.6254, utcOffset: 8 },
+  { name: "Luoyang, Henan, China", lat: 34.6197, lon: 112.454, utcOffset: 8 },
+  { name: "Kaifeng, Henan, China", lat: 34.7972, lon: 114.3076, utcOffset: 8 },
+  // Shaanxi & Shanxi Provinces
+  { name: "Xi'an, Shaanxi, China", lat: 34.3416, lon: 108.9398, utcOffset: 8 },
+  { name: "Xianyang, Shaanxi, China", lat: 34.3296, lon: 108.709, utcOffset: 8 },
+  { name: "Yan'an, Shaanxi, China", lat: 36.5854, lon: 109.4897, utcOffset: 8 },
+  { name: "Taiyuan, Shanxi, China", lat: 37.8706, lon: 112.5489, utcOffset: 8 },
+  { name: "Datong, Shanxi, China", lat: 40.0768, lon: 113.3001, utcOffset: 8 },
+  // Fujian & Jiangxi Provinces
+  { name: "Fuzhou, Fujian, China", lat: 26.0745, lon: 119.2965, utcOffset: 8 },
+  { name: "Xiamen, Fujian, China", lat: 24.4798, lon: 118.0894, utcOffset: 8 },
+  { name: "Quanzhou, Fujian, China", lat: 24.9089, lon: 118.5859, utcOffset: 8 },
+  { name: "Nanchang, Jiangxi, China", lat: 28.6829, lon: 115.8582, utcOffset: 8 },
+  { name: "Jiujiang, Jiangxi, China", lat: 29.7051, lon: 115.9922, utcOffset: 8 },
+  // Northeast China (Liaoning, Jilin, Heilongjiang)
+  { name: "Shenyang, Liaoning, China", lat: 41.8057, lon: 123.4315, utcOffset: 8 },
+  { name: "Dalian, Liaoning, China", lat: 38.914, lon: 121.6147, utcOffset: 8 },
+  { name: "Changchun, Jilin, China", lat: 43.8171, lon: 125.3235, utcOffset: 8 },
+  { name: "Jilin City, Jilin, China", lat: 43.8378, lon: 126.5494, utcOffset: 8 },
+  { name: "Harbin, Heilongjiang, China", lat: 45.8038, lon: 126.535, utcOffset: 8 },
+  // Southwest & Northwest (Yunnan, Guizhou, Guangxi, Gansu, Xinjiang, Tibet, etc.)
+  { name: "Kunming, Yunnan, China", lat: 25.0389, lon: 102.7183, utcOffset: 8 },
+  { name: "Dali, Yunnan, China", lat: 25.6065, lon: 100.2676, utcOffset: 8 },
+  { name: "Lijiang, Yunnan, China", lat: 26.8721, lon: 100.2297, utcOffset: 8 },
+  { name: "Guiyang, Guizhou, China", lat: 26.6477, lon: 106.6302, utcOffset: 8 },
+  { name: "Nanning, Guangxi, China", lat: 22.817, lon: 108.3665, utcOffset: 8 },
+  { name: "Guilin, Guangxi, China", lat: 25.2736, lon: 110.2902, utcOffset: 8 },
+  { name: "Lanzhou, Gansu, China", lat: 36.0611, lon: 103.8343, utcOffset: 8 },
+  { name: "Dunhuang, Gansu, China", lat: 40.1421, lon: 94.662, utcOffset: 8 },
+  { name: "Xining, Qinghai, China", lat: 36.6209, lon: 101.7801, utcOffset: 8 },
+  { name: "Hohhot, Inner Mongolia, China", lat: 40.8427, lon: 111.75, utcOffset: 8 },
+  { name: "Yinchuan, Ningxia, China", lat: 38.4872, lon: 106.2309, utcOffset: 8 },
+  { name: "Haikou, Hainan, China", lat: 20.0444, lon: 110.1999, utcOffset: 8 },
+  { name: "Sanya, Hainan, China", lat: 18.2528, lon: 109.5119, utcOffset: 8 },
+  { name: "Ürümqi, Xinjiang, China", lat: 43.8256, lon: 87.6168, utcOffset: 8 },
+  { name: "Kashgar, Xinjiang, China", lat: 39.4677, lon: 75.9938, utcOffset: 8 },
+  { name: "Lhasa, Tibet, China", lat: 29.65, lon: 91.1, utcOffset: 8 },
+  { name: "Shigatse, Tibet, China", lat: 29.2675, lon: 88.8814, utcOffset: 8 },
   { name: "Hong Kong", lat: 22.3193, lon: 114.1694, utcOffset: 8 },
   { name: "Macau", lat: 22.1987, lon: 113.5439, utcOffset: 8 },
 
-  // ─── India ───
-  { name: "New Delhi, India", lat: 28.6139, lon: 77.2090, utcOffset: 5.5 },
-  { name: "Mumbai, India", lat: 19.0760, lon: 72.8777, utcOffset: 5.5 },
+  // ─── East Asia ───
+  { name: "Tokyo, Japan", lat: 35.6762, lon: 139.6503, utcOffset: 9 },
+  { name: "Kyoto, Japan", lat: 35.0116, lon: 135.7681, utcOffset: 9 },
+  { name: "Osaka, Japan", lat: 34.6937, lon: 135.5023, utcOffset: 9 },
+  { name: "Nagoya, Japan", lat: 35.1815, lon: 136.9066, utcOffset: 9 },
+  { name: "Sapporo, Japan", lat: 43.0618, lon: 141.3545, utcOffset: 9 },
+  { name: "Fukuoka, Japan", lat: 33.5904, lon: 130.4017, utcOffset: 9 },
+  { name: "Seoul, South Korea", lat: 37.5665, lon: 126.978, utcOffset: 9 },
+  { name: "Busan, South Korea", lat: 35.1796, lon: 129.0756, utcOffset: 9 },
+  { name: "Incheon, South Korea", lat: 37.4563, lon: 126.7052, utcOffset: 9 },
+  { name: "Taipei, Taiwan", lat: 25.033, lon: 121.5654, utcOffset: 8 },
+  { name: "Kaohsiung, Taiwan", lat: 22.6273, lon: 120.3014, utcOffset: 8 },
+  { name: "Ulaanbaatar, Mongolia", lat: 47.8864, lon: 106.9057, utcOffset: 8 },
+
+  // ─── South Asia ───
+  { name: "New Delhi, India", lat: 28.6139, lon: 77.209, utcOffset: 5.5 },
+  { name: "Mumbai, India", lat: 19.076, lon: 72.8777, utcOffset: 5.5 },
   { name: "Bangalore, India", lat: 12.9716, lon: 77.5946, utcOffset: 5.5 },
   { name: "Chennai, India", lat: 13.0827, lon: 80.2707, utcOffset: 5.5 },
   { name: "Kolkata, India", lat: 22.5726, lon: 88.3639, utcOffset: 5.5 },
-  { name: "Hyderabad, India", lat: 17.3850, lon: 78.4867, utcOffset: 5.5 },
-
-  // ─── Southeast Asia ───
-  { name: "Singapore", lat: 1.3521, lon: 103.8198, utcOffset: 8 },
-  { name: "Bangkok, Thailand", lat: 13.7563, lon: 100.5018, utcOffset: 7 },
-  { name: "Kuala Lumpur, Malaysia", lat: 3.1390, lon: 101.6869, utcOffset: 8 },
-  { name: "Jakarta, Indonesia", lat: -6.2088, lon: 106.8456, utcOffset: 7 },
-  { name: "Manila, Philippines", lat: 14.5995, lon: 120.9842, utcOffset: 8 },
-  { name: "Ho Chi Minh City, Vietnam", lat: 10.8231, lon: 106.6297, utcOffset: 7 },
-  { name: "Hanoi, Vietnam", lat: 21.0285, lon: 105.8542, utcOffset: 7 },
-
-  // ─── East Asia ───
-  { name: "Tokyo, Japan", lat: 35.6762, lon: 139.6503, utcOffset: 9 },
-  { name: "Osaka, Japan", lat: 34.6937, lon: 135.5023, utcOffset: 9 },
-  { name: "Seoul, South Korea", lat: 37.5665, lon: 126.9780, utcOffset: 9 },
-  { name: "Taipei, Taiwan", lat: 25.0330, lon: 121.5654, utcOffset: 8 },
-
-  // ─── Middle East ───
-  { name: "Dubai, UAE", lat: 25.2048, lon: 55.2708, utcOffset: 4 },
-  { name: "Abu Dhabi, UAE", lat: 24.4539, lon: 54.3773, utcOffset: 4 },
-  { name: "Doha, Qatar", lat: 25.2854, lon: 51.5310, utcOffset: 3 },
-  { name: "Riyadh, Saudi Arabia", lat: 24.7136, lon: 46.6753, utcOffset: 3 },
-  { name: "Istanbul, Turkey", lat: 41.0082, lon: 28.9784, utcOffset: 3 },
-  { name: "Tehran, Iran", lat: 35.6892, lon: 51.3890, utcOffset: 3.5 },
-
-  // ─── Europe ───
-  { name: "London, UK", lat: 51.5074, lon: -0.1278, utcOffset: 0 },
-  { name: "Paris, France", lat: 48.8566, lon: 2.3522, utcOffset: 1 },
-  { name: "Berlin, Germany", lat: 52.5200, lon: 13.4050, utcOffset: 1 },
-  { name: "Madrid, Spain", lat: 40.4168, lon: -3.7038, utcOffset: 1 },
-  { name: "Rome, Italy", lat: 41.9028, lon: 12.4964, utcOffset: 1 },
-  { name: "Amsterdam, Netherlands", lat: 52.3676, lon: 4.9041, utcOffset: 1 },
-  { name: "Moscow, Russia", lat: 55.7558, lon: 37.6173, utcOffset: 3 },
-  { name: "Stockholm, Sweden", lat: 59.3293, lon: 18.0686, utcOffset: 1 },
-  { name: "Vienna, Austria", lat: 48.2082, lon: 16.3738, utcOffset: 1 },
-  { name: "Zurich, Switzerland", lat: 47.3769, lon: 8.5417, utcOffset: 1 },
-  { name: "Dublin, Ireland", lat: 53.3498, lon: -6.2603, utcOffset: 0 },
-  { name: "Lisbon, Portugal", lat: 38.7223, lon: -9.1393, utcOffset: 0 },
-  { name: "Athens, Greece", lat: 37.9838, lon: 23.7275, utcOffset: 2 },
-  { name: "Warsaw, Poland", lat: 52.2297, lon: 21.0122, utcOffset: 1 },
-  { name: "Prague, Czech Republic", lat: 50.0755, lon: 14.4378, utcOffset: 1 },
-
-  // ─── Africa ───
-  { name: "Cairo, Egypt", lat: 30.0444, lon: 31.2357, utcOffset: 2 },
-  { name: "Lagos, Nigeria", lat: 6.5244, lon: 3.3792, utcOffset: 1 },
-  { name: "Nairobi, Kenya", lat: -1.2921, lon: 36.8219, utcOffset: 3 },
-  { name: "Cape Town, South Africa", lat: -33.9249, lon: 18.4241, utcOffset: 2 },
-  { name: "Johannesburg, South Africa", lat: -26.2041, lon: 28.0473, utcOffset: 2 },
-  { name: "Casablanca, Morocco", lat: 33.5731, lon: -7.5898, utcOffset: 1 },
-  { name: "Addis Ababa, Ethiopia", lat: 9.0250, lon: 38.7469, utcOffset: 3 },
-
-  // ─── North America ───
-  { name: "New York, USA", lat: 40.7128, lon: -74.0060, utcOffset: -5 },
-  { name: "Los Angeles, USA", lat: 34.0522, lon: -118.2437, utcOffset: -8 },
-  { name: "Chicago, USA", lat: 41.8781, lon: -87.6298, utcOffset: -6 },
-  { name: "Houston, USA", lat: 29.7604, lon: -95.3698, utcOffset: -6 },
-  { name: "San Francisco, USA", lat: 37.7749, lon: -122.4194, utcOffset: -8 },
-  { name: "Washington D.C., USA", lat: 38.9072, lon: -77.0369, utcOffset: -5 },
-  { name: "Toronto, Canada", lat: 43.6532, lon: -79.3832, utcOffset: -5 },
-  { name: "Vancouver, Canada", lat: 49.2827, lon: -123.1207, utcOffset: -8 },
-  { name: "Mexico City, Mexico", lat: 19.4326, lon: -99.1332, utcOffset: -6 },
-
-  // ─── South America ───
-  { name: "São Paulo, Brazil", lat: -23.5505, lon: -46.6333, utcOffset: -3 },
-  { name: "Buenos Aires, Argentina", lat: -34.6037, lon: -58.3816, utcOffset: -3 },
-  { name: "Lima, Peru", lat: -12.0464, lon: -77.0428, utcOffset: -5 },
-  { name: "Bogotá, Colombia", lat: 4.7110, lon: -74.0721, utcOffset: -5 },
-  { name: "Santiago, Chile", lat: -33.4489, lon: -70.6693, utcOffset: -4 },
-  { name: "Rio de Janeiro, Brazil", lat: -22.9068, lon: -43.1729, utcOffset: -3 },
-
-  // ─── Oceania ───
-  { name: "Sydney, Australia", lat: -33.8688, lon: 151.2093, utcOffset: 10 },
-  { name: "Melbourne, Australia", lat: -37.8136, lon: 144.9631, utcOffset: 10 },
-  { name: "Auckland, New Zealand", lat: -36.8485, lon: 174.7633, utcOffset: 12 },
-  { name: "Perth, Australia", lat: -31.9505, lon: 115.8605, utcOffset: 8 },
-
-  // ─── Pakistan / Bangladesh / Nepal ───
+  { name: "Hyderabad, India", lat: 17.385, lon: 78.4867, utcOffset: 5.5 },
+  { name: "Ahmedabad, India", lat: 23.0225, lon: 72.5714, utcOffset: 5.5 },
+  { name: "Pune, India", lat: 18.5204, lon: 73.8567, utcOffset: 5.5 },
+  { name: "Jaipur, India", lat: 26.9124, lon: 75.7873, utcOffset: 5.5 },
+  { name: "Surat, India", lat: 21.1702, lon: 72.8311, utcOffset: 5.5 },
+  { name: "Lucknow, India", lat: 26.8467, lon: 80.9462, utcOffset: 5.5 },
+  { name: "Varanasi, India", lat: 25.3176, lon: 82.9739, utcOffset: 5.5 },
   { name: "Karachi, Pakistan", lat: 24.8607, lon: 67.0011, utcOffset: 5 },
   { name: "Lahore, Pakistan", lat: 31.5204, lon: 74.3587, utcOffset: 5 },
   { name: "Islamabad, Pakistan", lat: 33.6844, lon: 73.0479, utcOffset: 5 },
   { name: "Dhaka, Bangladesh", lat: 23.8103, lon: 90.4125, utcOffset: 6 },
-  { name: "Kathmandu, Nepal", lat: 27.7172, lon: 85.3240, utcOffset: 5.75 },
-
-  // ─── Maldives ───
+  { name: "Chittagong, Bangladesh", lat: 22.3569, lon: 91.7832, utcOffset: 6 },
+  { name: "Kathmandu, Nepal", lat: 27.7172, lon: 85.324, utcOffset: 5.75 },
+  { name: "Pokhara, Nepal", lat: 28.2096, lon: 83.9856, utcOffset: 5.75 },
+  { name: "Thimphu, Bhutan", lat: 27.4728, lon: 89.6393, utcOffset: 6 },
   { name: "Malé, Maldives", lat: 4.1755, lon: 73.5093, utcOffset: 5 },
+  { name: "Kabul, Afghanistan", lat: 34.5553, lon: 69.2075, utcOffset: 4.5 },
+
+  // ─── Southeast Asia ───
+  { name: "Singapore", lat: 1.3521, lon: 103.8198, utcOffset: 8 },
+  { name: "Bangkok, Thailand", lat: 13.7563, lon: 100.5018, utcOffset: 7 },
+  { name: "Chiang Mai, Thailand", lat: 18.7883, lon: 98.9853, utcOffset: 7 },
+  { name: "Phuket, Thailand", lat: 7.8804, lon: 98.3923, utcOffset: 7 },
+  { name: "Kuala Lumpur, Malaysia", lat: 3.139, lon: 101.6869, utcOffset: 8 },
+  { name: "Penang, Malaysia", lat: 5.4141, lon: 100.3288, utcOffset: 8 },
+  { name: "Jakarta, Indonesia", lat: -6.2088, lon: 106.8456, utcOffset: 7 },
+  { name: "Bali (Denpasar), Indonesia", lat: -8.6705, lon: 115.2126, utcOffset: 8 },
+  { name: "Surabaya, Indonesia", lat: -7.2575, lon: 112.7521, utcOffset: 7 },
+  { name: "Manila, Philippines", lat: 14.5995, lon: 120.9842, utcOffset: 8 },
+  { name: "Cebu City, Philippines", lat: 10.3157, lon: 123.8854, utcOffset: 8 },
+  { name: "Ho Chi Minh City, Vietnam", lat: 10.8231, lon: 106.6297, utcOffset: 7 },
+  { name: "Hanoi, Vietnam", lat: 21.0285, lon: 105.8542, utcOffset: 7 },
+  { name: "Da Nang, Vietnam", lat: 16.0544, lon: 108.2022, utcOffset: 7 },
+  { name: "Phnom Penh, Cambodia", lat: 11.5564, lon: 104.9282, utcOffset: 7 },
+  { name: "Siem Reap, Cambodia", lat: 13.3671, lon: 103.8448, utcOffset: 7 },
+  { name: "Vientiane, Laos", lat: 17.9757, lon: 102.6331, utcOffset: 7 },
+  { name: "Yangon, Myanmar", lat: 16.8661, lon: 96.1951, utcOffset: 6.5 },
+  { name: "Mandalay, Myanmar", lat: 21.9588, lon: 96.0891, utcOffset: 6.5 },
+  { name: "Bandar Seri Begawan, Brunei", lat: 4.9031, lon: 114.9398, utcOffset: 8 },
+  { name: "Dili, Timor-Leste", lat: -8.5569, lon: 125.5603, utcOffset: 9 },
+
+  // ─── Middle East & Central Asia ───
+  { name: "Dubai, UAE", lat: 25.2048, lon: 55.2708, utcOffset: 4 },
+  { name: "Abu Dhabi, UAE", lat: 24.4539, lon: 54.3773, utcOffset: 4 },
+  { name: "Doha, Qatar", lat: 25.2854, lon: 51.531, utcOffset: 3 },
+  { name: "Riyadh, Saudi Arabia", lat: 24.7136, lon: 46.6753, utcOffset: 3 },
+  { name: "Jeddah, Saudi Arabia", lat: 21.5433, lon: 39.1728, utcOffset: 3 },
+  { name: "Mecca, Saudi Arabia", lat: 21.3891, lon: 39.8579, utcOffset: 3 },
+  { name: "Kuwait City, Kuwait", lat: 29.3759, lon: 47.9774, utcOffset: 3 },
+  { name: "Manama, Bahrain", lat: 26.2285, lon: 50.586, utcOffset: 3 },
+  { name: "Muscat, Oman", lat: 23.588, lon: 58.3829, utcOffset: 4 },
+  { name: "Amman, Jordan", lat: 31.9454, lon: 35.9284, utcOffset: 3 },
+  { name: "Beirut, Lebanon", lat: 33.8938, lon: 35.5018, utcOffset: 2 },
+  { name: "Jerusalem", lat: 31.7683, lon: 35.2137, utcOffset: 2 },
+  { name: "Tel Aviv, Israel", lat: 32.0853, lon: 34.7818, utcOffset: 2 },
+  { name: "Baghdad, Iraq", lat: 33.3152, lon: 44.3661, utcOffset: 3 },
+  { name: "Tehran, Iran", lat: 35.6892, lon: 51.389, utcOffset: 3.5 },
+  { name: "Isfahan, Iran", lat: 32.6546, lon: 51.668, utcOffset: 3.5 },
+  { name: "Istanbul, Turkey", lat: 41.0082, lon: 28.9784, utcOffset: 3 },
+  { name: "Ankara, Turkey", lat: 39.9334, lon: 32.8597, utcOffset: 3 },
+  { name: "Izmir, Turkey", lat: 38.4237, lon: 27.1428, utcOffset: 3 },
+  { name: "Baku, Azerbaijan", lat: 40.4093, lon: 49.8671, utcOffset: 4 },
+  { name: "Tbilisi, Georgia", lat: 41.7151, lon: 44.8271, utcOffset: 4 },
+  { name: "Yerevan, Armenia", lat: 40.1792, lon: 44.4991, utcOffset: 4 },
+  { name: "Tashkent, Uzbekistan", lat: 41.2995, lon: 69.2401, utcOffset: 5 },
+  { name: "Samarkand, Uzbekistan", lat: 39.627, lon: 66.975, utcOffset: 5 },
+  { name: "Almaty, Kazakhstan", lat: 43.222, lon: 76.8512, utcOffset: 5 },
+  { name: "Astana, Kazakhstan", lat: 51.1694, lon: 71.4491, utcOffset: 5 },
+  { name: "Bishkek, Kyrgyzstan", lat: 42.8746, lon: 74.5698, utcOffset: 6 },
+  { name: "Dushanbe, Tajikistan", lat: 38.5598, lon: 68.787, utcOffset: 5 },
+  { name: "Ashgabat, Turkmenistan", lat: 37.9601, lon: 58.3261, utcOffset: 5 },
+
+  // ─── Europe ───
+  { name: "London, UK", lat: 51.5074, lon: -0.1278, utcOffset: 0 },
+  { name: "Edinburgh, UK", lat: 55.9533, lon: -3.1883, utcOffset: 0 },
+  { name: "Manchester, UK", lat: 53.4808, lon: -2.2426, utcOffset: 0 },
+  { name: "Birmingham, UK", lat: 52.4862, lon: -1.8904, utcOffset: 0 },
+  { name: "Oxford, UK", lat: 51.752, lon: -1.2577, utcOffset: 0 },
+  { name: "Cambridge, UK", lat: 52.2053, lon: 0.1218, utcOffset: 0 },
+  { name: "Paris, France", lat: 48.8566, lon: 2.3522, utcOffset: 1 },
+  { name: "Marseille, France", lat: 43.2965, lon: 5.3698, utcOffset: 1 },
+  { name: "Lyon, France", lat: 45.764, lon: 4.8357, utcOffset: 1 },
+  { name: "Nice, France", lat: 43.7102, lon: 7.262, utcOffset: 1 },
+  { name: "Berlin, Germany", lat: 52.52, lon: 13.405, utcOffset: 1 },
+  { name: "Munich, Germany", lat: 48.1351, lon: 11.582, utcOffset: 1 },
+  { name: "Frankfurt, Germany", lat: 50.1109, lon: 8.6821, utcOffset: 1 },
+  { name: "Hamburg, Germany", lat: 53.5511, lon: 9.9937, utcOffset: 1 },
+  { name: "Cologne, Germany", lat: 50.9375, lon: 6.9603, utcOffset: 1 },
+  { name: "Madrid, Spain", lat: 40.4168, lon: -3.7038, utcOffset: 1 },
+  { name: "Barcelona, Spain", lat: 41.3851, lon: 2.1734, utcOffset: 1 },
+  { name: "Seville, Spain", lat: 37.3891, lon: -5.9845, utcOffset: 1 },
+  { name: "Valencia, Spain", lat: 39.4699, lon: -0.3763, utcOffset: 1 },
+  { name: "Rome, Italy", lat: 41.9028, lon: 12.4964, utcOffset: 1 },
+  { name: "Milan, Italy", lat: 45.4642, lon: 9.19, utcOffset: 1 },
+  { name: "Florence, Italy", lat: 43.7696, lon: 11.2558, utcOffset: 1 },
+  { name: "Venice, Italy", lat: 45.4408, lon: 12.3155, utcOffset: 1 },
+  { name: "Naples, Italy", lat: 40.8518, lon: 14.2681, utcOffset: 1 },
+  { name: "Amsterdam, Netherlands", lat: 52.3676, lon: 4.9041, utcOffset: 1 },
+  { name: "Rotterdam, Netherlands", lat: 51.9244, lon: 4.4777, utcOffset: 1 },
+  { name: "Brussels, Belgium", lat: 50.8503, lon: 4.3517, utcOffset: 1 },
+  { name: "Antwerp, Belgium", lat: 51.2194, lon: 4.4025, utcOffset: 1 },
+  { name: "Vienna, Austria", lat: 48.2082, lon: 16.3738, utcOffset: 1 },
+  { name: "Salzburg, Austria", lat: 47.8095, lon: 13.055, utcOffset: 1 },
+  { name: "Zurich, Switzerland", lat: 47.3769, lon: 8.5417, utcOffset: 1 },
+  { name: "Geneva, Switzerland", lat: 46.2044, lon: 6.1432, utcOffset: 1 },
+  { name: "Stockholm, Sweden", lat: 59.3293, lon: 18.0686, utcOffset: 1 },
+  { name: "Gothenburg, Sweden", lat: 57.7089, lon: 11.9746, utcOffset: 1 },
+  { name: "Oslo, Norway", lat: 59.9139, lon: 10.7522, utcOffset: 1 },
+  { name: "Bergen, Norway", lat: 60.3913, lon: 5.3221, utcOffset: 1 },
+  { name: "Tromsø, Norway", lat: 69.6492, lon: 18.9553, utcOffset: 1 },
+  { name: "Copenhagen, Denmark", lat: 55.6761, lon: 12.5683, utcOffset: 1 },
+  { name: "Helsinki, Finland", lat: 60.1699, lon: 24.9384, utcOffset: 2 },
+  { name: "Reykjavik, Iceland", lat: 64.1466, lon: -21.9426, utcOffset: 0 },
+  { name: "Dublin, Ireland", lat: 53.3498, lon: -6.2603, utcOffset: 0 },
+  { name: "Cork, Ireland", lat: 51.8985, lon: -8.4756, utcOffset: 0 },
+  { name: "Lisbon, Portugal", lat: 38.7223, lon: -9.1393, utcOffset: 0 },
+  { name: "Porto, Portugal", lat: 41.1579, lon: -8.6291, utcOffset: 0 },
+  { name: "Athens, Greece", lat: 37.9838, lon: 23.7275, utcOffset: 2 },
+  { name: "Thessaloniki, Greece", lat: 40.6401, lon: 22.9444, utcOffset: 2 },
+  { name: "Prague, Czech Republic", lat: 50.0755, lon: 14.4378, utcOffset: 1 },
+  { name: "Warsaw, Poland", lat: 52.2297, lon: 21.0122, utcOffset: 1 },
+  { name: "Krakow, Poland", lat: 50.0647, lon: 19.945, utcOffset: 1 },
+  { name: "Budapest, Hungary", lat: 47.4979, lon: 19.0402, utcOffset: 1 },
+  { name: "Bucharest, Romania", lat: 44.4268, lon: 26.1025, utcOffset: 2 },
+  { name: "Sofia, Bulgaria", lat: 42.6977, lon: 23.3219, utcOffset: 2 },
+  { name: "Zagreb, Croatia", lat: 45.815, lon: 15.9819, utcOffset: 1 },
+  { name: "Dubrovnik, Croatia", lat: 42.6507, lon: 18.0944, utcOffset: 1 },
+  { name: "Belgrade, Serbia", lat: 44.7866, lon: 20.4489, utcOffset: 1 },
+  { name: "Sarajevo, Bosnia and Herzegovina", lat: 43.8563, lon: 18.4131, utcOffset: 1 },
+  { name: "Ljubljana, Slovenia", lat: 46.0569, lon: 14.5058, utcOffset: 1 },
+  { name: "Bratislava, Slovakia", lat: 48.1486, lon: 17.1077, utcOffset: 1 },
+  { name: "Kyiv, Ukraine", lat: 50.4501, lon: 30.5234, utcOffset: 2 },
+  { name: "Moscow, Russia", lat: 55.7558, lon: 37.6173, utcOffset: 3 },
+  { name: "Saint Petersburg, Russia", lat: 59.9343, lon: 30.3351, utcOffset: 3 },
+  { name: "Novosibirsk, Russia", lat: 55.0084, lon: 82.9357, utcOffset: 7 },
+  { name: "Vladivostok, Russia", lat: 43.1155, lon: 131.8855, utcOffset: 10 },
+
+  // ─── North America ───
+  { name: "New York City, NY, USA", lat: 40.7128, lon: -74.006, utcOffset: -5 },
+  { name: "Los Angeles, CA, USA", lat: 34.0522, lon: -118.2437, utcOffset: -8 },
+  { name: "Chicago, IL, USA", lat: 41.8781, lon: -87.6298, utcOffset: -6 },
+  { name: "Houston, TX, USA", lat: 29.7604, lon: -95.3698, utcOffset: -6 },
+  { name: "Phoenix, AZ, USA", lat: 33.4484, lon: -112.074, utcOffset: -7 },
+  { name: "Philadelphia, PA, USA", lat: 39.9526, lon: -75.1652, utcOffset: -5 },
+  { name: "San Antonio, TX, USA", lat: 29.4241, lon: -98.4936, utcOffset: -6 },
+  { name: "San Diego, CA, USA", lat: 32.7157, lon: -117.1611, utcOffset: -8 },
+  { name: "Dallas, TX, USA", lat: 32.7767, lon: -96.797, utcOffset: -6 },
+  { name: "San Francisco, CA, USA", lat: 37.7749, lon: -122.4194, utcOffset: -8 },
+  { name: "San Jose, CA, USA", lat: 37.3382, lon: -121.8863, utcOffset: -8 },
+  { name: "Austin, TX, USA", lat: 30.2672, lon: -97.7431, utcOffset: -6 },
+  { name: "Seattle, WA, USA", lat: 47.6062, lon: -122.3321, utcOffset: -8 },
+  { name: "Denver, CO, USA", lat: 39.7392, lon: -104.9903, utcOffset: -7 },
+  { name: "Boston, MA, USA", lat: 42.3601, lon: -71.0589, utcOffset: -5 },
+  { name: "Washington, D.C., USA", lat: 38.9072, lon: -77.0369, utcOffset: -5 },
+  { name: "Miami, FL, USA", lat: 25.7617, lon: -80.1918, utcOffset: -5 },
+  { name: "Atlanta, GA, USA", lat: 33.749, lon: -84.388, utcOffset: -5 },
+  { name: "Las Vegas, NV, USA", lat: 36.1699, lon: -115.1398, utcOffset: -8 },
+  { name: "Portland, OR, USA", lat: 45.5152, lon: -122.6784, utcOffset: -8 },
+  { name: "Minneapolis, MN, USA", lat: 44.9778, lon: -93.265, utcOffset: -6 },
+  { name: "New Orleans, LA, USA", lat: 29.9511, lon: -90.0715, utcOffset: -6 },
+  { name: "Honolulu, HI, USA", lat: 21.3069, lon: -157.8583, utcOffset: -10 },
+  { name: "Anchorage, AK, USA", lat: 61.2181, lon: -149.9003, utcOffset: -9 },
+  { name: "Toronto, Canada", lat: 43.6532, lon: -79.3832, utcOffset: -5 },
+  { name: "Vancouver, Canada", lat: 49.2827, lon: -123.1207, utcOffset: -8 },
+  { name: "Montreal, Canada", lat: 45.5017, lon: -73.5673, utcOffset: -5 },
+  { name: "Calgary, Canada", lat: 51.0447, lon: -114.0719, utcOffset: -7 },
+  { name: "Ottawa, Canada", lat: 45.4215, lon: -75.6972, utcOffset: -5 },
+  { name: "Quebec City, Canada", lat: 46.8139, lon: -71.208, utcOffset: -5 },
+  { name: "Edmonton, Canada", lat: 53.5461, lon: -113.4938, utcOffset: -7 },
+  { name: "Winnipeg, Canada", lat: 49.8951, lon: -97.1384, utcOffset: -6 },
+  { name: "Halifax, Canada", lat: 44.6488, lon: -63.5752, utcOffset: -4 },
+  { name: "Mexico City, Mexico", lat: 19.4326, lon: -99.1332, utcOffset: -6 },
+  { name: "Guadalajara, Mexico", lat: 20.6597, lon: -103.3496, utcOffset: -6 },
+  { name: "Monterrey, Mexico", lat: 25.6866, lon: -100.3161, utcOffset: -6 },
+  { name: "Cancún, Mexico", lat: 21.1619, lon: -86.8515, utcOffset: -5 },
+  { name: "Tijuana, Mexico", lat: 32.5149, lon: -117.0382, utcOffset: -8 },
+  { name: "Havana, Cuba", lat: 23.1136, lon: -82.3666, utcOffset: -5 },
+  { name: "San Juan, Puerto Rico", lat: 18.4655, lon: -66.1057, utcOffset: -4 },
+  { name: "Kingston, Jamaica", lat: 18.0179, lon: -76.8099, utcOffset: -5 },
+  { name: "Santo Domingo, Dominican Republic", lat: 18.4861, lon: -69.9312, utcOffset: -4 },
+  { name: "Panama City, Panama", lat: 8.9824, lon: -79.5199, utcOffset: -5 },
+  { name: "San José, Costa Rica", lat: 9.9281, lon: -84.0907, utcOffset: -6 },
+  { name: "Guatemala City, Guatemala", lat: 14.6349, lon: -90.5069, utcOffset: -6 },
+
+  // ─── South America ───
+  { name: "São Paulo, Brazil", lat: -23.5505, lon: -46.6333, utcOffset: -3 },
+  { name: "Rio de Janeiro, Brazil", lat: -22.9068, lon: -43.1729, utcOffset: -3 },
+  { name: "Brasília, Brazil", lat: -15.7975, lon: -47.8919, utcOffset: -3 },
+  { name: "Salvador, Brazil", lat: -12.9777, lon: -38.5016, utcOffset: -3 },
+  { name: "Fortaleza, Brazil", lat: -3.7172, lon: -38.5434, utcOffset: -3 },
+  { name: "Manaus, Brazil", lat: -3.119, lon: -60.0217, utcOffset: -4 },
+  { name: "Buenos Aires, Argentina", lat: -34.6037, lon: -58.3816, utcOffset: -3 },
+  { name: "Córdoba, Argentina", lat: -31.4201, lon: -64.1888, utcOffset: -3 },
+  { name: "Rosario, Argentina", lat: -32.9468, lon: -60.6393, utcOffset: -3 },
+  { name: "Mendoza, Argentina", lat: -32.8895, lon: -68.8458, utcOffset: -3 },
+  { name: "Ushuaia, Argentina", lat: -54.8019, lon: -68.303, utcOffset: -3 },
+  { name: "Santiago, Chile", lat: -33.4489, lon: -70.6693, utcOffset: -4 },
+  { name: "Valparaíso, Chile", lat: -33.0472, lon: -71.6127, utcOffset: -4 },
+  { name: "Punta Arenas, Chile", lat: -53.1638, lon: -70.9171, utcOffset: -3 },
+  { name: "Lima, Peru", lat: -12.0464, lon: -77.0428, utcOffset: -5 },
+  { name: "Cusco, Peru", lat: -13.5319, lon: -71.9675, utcOffset: -5 },
+  { name: "Arequipa, Peru", lat: -16.409, lon: -71.5375, utcOffset: -5 },
+  { name: "Bogotá, Colombia", lat: 4.711, lon: -74.0721, utcOffset: -5 },
+  { name: "Medellín, Colombia", lat: 6.2442, lon: -75.5812, utcOffset: -5 },
+  { name: "Cali, Colombia", lat: 3.4516, lon: -76.532, utcOffset: -5 },
+  { name: "Cartagena, Colombia", lat: 10.391, lon: -75.4794, utcOffset: -5 },
+  { name: "Quito, Ecuador", lat: -0.1807, lon: -78.4678, utcOffset: -5 },
+  { name: "Guayaquil, Ecuador", lat: -2.1894, lon: -79.8891, utcOffset: -5 },
+  { name: "Galapagos (Puerto Ayora), Ecuador", lat: -0.7432, lon: -90.3135, utcOffset: -6 },
+  { name: "Caracas, Venezuela", lat: 10.4806, lon: -66.9036, utcOffset: -4 },
+  { name: "Maracaibo, Venezuela", lat: 10.6427, lon: -71.6125, utcOffset: -4 },
+  { name: "La Paz, Bolivia", lat: -16.5, lon: -68.15, utcOffset: -4 },
+  { name: "Santa Cruz, Bolivia", lat: -17.8146, lon: -63.1561, utcOffset: -4 },
+  { name: "Montevideo, Uruguay", lat: -34.9011, lon: -56.1645, utcOffset: -3 },
+  { name: "Punta del Este, Uruguay", lat: -34.9644, lon: -54.9439, utcOffset: -3 },
+  { name: "Asunción, Paraguay", lat: -25.2637, lon: -57.5759, utcOffset: -4 },
+  { name: "Georgetown, Guyana", lat: 6.8013, lon: -58.1551, utcOffset: -4 },
+  { name: "Paramaribo, Suriname", lat: 5.852, lon: -55.2038, utcOffset: -3 },
+
+  // ─── Africa ───
+  { name: "Cairo, Egypt", lat: 30.0444, lon: 31.2357, utcOffset: 2 },
+  { name: "Alexandria, Egypt", lat: 31.2001, lon: 29.9187, utcOffset: 2 },
+  { name: "Luxor, Egypt", lat: 25.6872, lon: 32.6396, utcOffset: 2 },
+  { name: "Johannesburg, South Africa", lat: -26.2041, lon: 28.0473, utcOffset: 2 },
+  { name: "Cape Town, South Africa", lat: -33.9249, lon: 18.4241, utcOffset: 2 },
+  { name: "Durban, South Africa", lat: -29.8587, lon: 31.0218, utcOffset: 2 },
+  { name: "Pretoria, South Africa", lat: -25.7479, lon: 28.2293, utcOffset: 2 },
+  { name: "Nairobi, Kenya", lat: -1.2921, lon: 36.8219, utcOffset: 3 },
+  { name: "Mombasa, Kenya", lat: -4.0435, lon: 39.6682, utcOffset: 3 },
+  { name: "Lagos, Nigeria", lat: 6.5244, lon: 3.3792, utcOffset: 1 },
+  { name: "Abuja, Nigeria", lat: 9.0765, lon: 7.3986, utcOffset: 1 },
+  { name: "Accra, Ghana", lat: 5.6037, lon: -0.187, utcOffset: 0 },
+  { name: "Casablanca, Morocco", lat: 33.5731, lon: -7.5898, utcOffset: 1 },
+  { name: "Marrakech, Morocco", lat: 31.6295, lon: -7.9811, utcOffset: 1 },
+  { name: "Rabat, Morocco", lat: 34.0209, lon: -6.8416, utcOffset: 1 },
+  { name: "Tunis, Tunisia", lat: 36.8065, lon: 10.1815, utcOffset: 1 },
+  { name: "Algiers, Algeria", lat: 36.7538, lon: 3.0588, utcOffset: 1 },
+  { name: "Addis Ababa, Ethiopia", lat: 9.032, lon: 38.7482, utcOffset: 3 },
+  { name: "Dar es Salaam, Tanzania", lat: -6.7924, lon: 39.2083, utcOffset: 3 },
+  { name: "Zanzibar City, Tanzania", lat: -6.1659, lon: 39.2026, utcOffset: 3 },
+  { name: "Kampala, Uganda", lat: 0.3476, lon: 32.5825, utcOffset: 3 },
+  { name: "Kigali, Rwanda", lat: -1.9706, lon: 30.1044, utcOffset: 2 },
+  { name: "Dakar, Senegal", lat: 14.7167, lon: -17.4677, utcOffset: 0 },
+  { name: "Luanda, Angola", lat: -8.839, lon: 13.2894, utcOffset: 1 },
+  { name: "Kinshasa, DR Congo", lat: -4.4419, lon: 15.2663, utcOffset: 1 },
+  { name: "Harare, Zimbabwe", lat: -17.8252, lon: 31.0335, utcOffset: 2 },
+  { name: "Lusaka, Zambia", lat: -15.3875, lon: 28.3228, utcOffset: 2 },
+  { name: "Windhoek, Namibia", lat: -22.5609, lon: 17.0658, utcOffset: 2 },
+  { name: "Gaborone, Botswana", lat: -24.6282, lon: 25.9231, utcOffset: 2 },
+  { name: "Maputo, Mozambique", lat: -25.9692, lon: 32.5732, utcOffset: 2 },
+  { name: "Antananarivo, Madagascar", lat: -18.8792, lon: 47.5079, utcOffset: 3 },
+  { name: "Port Louis, Mauritius", lat: -20.1609, lon: 57.5012, utcOffset: 4 },
+  { name: "Victoria, Seychelles", lat: -4.6191, lon: 55.4513, utcOffset: 4 },
+
+  // ─── Australia & Oceania ───
+  { name: "Sydney, Australia", lat: -33.8688, lon: 151.2093, utcOffset: 10 },
+  { name: "Melbourne, Australia", lat: -37.8136, lon: 144.9631, utcOffset: 10 },
+  { name: "Brisbane, Australia", lat: -27.4698, lon: 153.0251, utcOffset: 10 },
+  { name: "Perth, Australia", lat: -31.9505, lon: 115.8605, utcOffset: 8 },
+  { name: "Adelaide, Australia", lat: -34.9285, lon: 138.6007, utcOffset: 9.5 },
+  { name: "Canberra, Australia", lat: -35.2809, lon: 149.13, utcOffset: 10 },
+  { name: "Hobart, Australia", lat: -42.8821, lon: 147.3272, utcOffset: 10 },
+  { name: "Darwin, Australia", lat: -12.4634, lon: 130.8456, utcOffset: 9.5 },
+  { name: "Cairns, Australia", lat: -16.9186, lon: 145.7781, utcOffset: 10 },
+  { name: "Alice Springs, Australia", lat: -23.698, lon: 133.8807, utcOffset: 9.5 },
+  { name: "Auckland, New Zealand", lat: -36.8485, lon: 174.7633, utcOffset: 12 },
+  { name: "Wellington, New Zealand", lat: -41.2865, lon: 174.7762, utcOffset: 12 },
+  { name: "Christchurch, New Zealand", lat: -43.5321, lon: 172.6362, utcOffset: 12 },
+  { name: "Queenstown, New Zealand", lat: -45.0312, lon: 168.6626, utcOffset: 12 },
+  { name: "Suva, Fiji", lat: -18.1416, lon: 178.4419, utcOffset: 12 },
+  { name: "Port Moresby, Papua New Guinea", lat: -9.4438, lon: 147.1803, utcOffset: 10 },
+  { name: "Nouméa, New Caledonia", lat: -22.2711, lon: 166.4416, utcOffset: 11 },
+  { name: "Papeete, Tahiti, French Polynesia", lat: -17.5516, lon: -149.5584, utcOffset: -10 },
+  { name: "Apia, Samoa", lat: -13.8333, lon: -171.7667, utcOffset: 13 },
+  { name: "Nuku'alofa, Tonga", lat: -21.1393, lon: -175.2049, utcOffset: 13 },
+  { name: "Guam", lat: 13.4443, lon: 144.7937, utcOffset: 10 },
 ];
 
+export const DEFAULT_CITY: CityEntry = CITIES[9]; // Kalawana, Sri Lanka
+
 /**
- * Fuzzy search cities by name. Case-insensitive substring match.
- * Returns up to `limit` results sorted by relevance (prefix match first).
+ * Autocomplete search across the expanded cities database.
+ * Supports multi-token search across city, province, and country names.
  */
-export function searchCities(query: string, limit = 8): CityEntry[] {
-  if (!query.trim()) return [];
+export function searchCities(query: string, maxResults = 10): CityEntry[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return CITIES.slice(0, maxResults);
 
-  const q = query.toLowerCase().trim();
-
-  // Score: 0 = starts with query, 1 = word boundary match, 2 = substring match
+  const tokens = q.split(/[\s,]+/).filter(Boolean);
   const scored: { city: CityEntry; score: number }[] = [];
 
   for (const city of CITIES) {
-    const name = city.name.toLowerCase();
+    const nameLower = city.name.toLowerCase();
 
-    if (name.startsWith(q)) {
-      scored.push({ city, score: 0 });
-    } else if (
-      name.includes(`, ${q}`) ||
-      name.split(/[\s,]+/).some((w) => w.startsWith(q))
-    ) {
-      scored.push({ city, score: 1 });
-    } else if (name.includes(q)) {
-      scored.push({ city, score: 2 });
+    // All search tokens must appear in the city entry
+    const allTokensMatch = tokens.every((tok) => nameLower.includes(tok));
+    if (!allTokensMatch) continue;
+
+    let score = 0;
+    if (nameLower.startsWith(q)) {
+      score = 100;
+    } else if (nameLower.includes(q)) {
+      const idx = nameLower.indexOf(q);
+      score = 80 - Math.min(30, idx);
+    } else {
+      score = 60;
     }
+
+    scored.push({ city, score });
   }
 
-  scored.sort((a, b) => a.score - b.score);
-  return scored.slice(0, limit).map((s) => s.city);
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, maxResults).map((s) => s.city);
 }

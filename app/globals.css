@@ -329,26 +329,113 @@ h3 {
   max-width: 32ch;
 }
 
-.landing-chevron {
-  background: none;
-  border: none;
-  color: var(--moonbeam);
-  cursor: pointer;
-  padding: var(--space-2);
-  animation: breatheDown 2.4s ease-in-out infinite;
-  transition: color 0.3s ease;
-  position: absolute;
-  bottom: var(--space-6);
+/* ---------- LANDING HERO CTA ---------- */
+.landing-cta-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
 }
 
-.landing-chevron:hover {
+.landing-cta-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 160, 80, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(200, 160, 80, 0.12) 0%,
+    rgba(136, 136, 204, 0.15) 50%,
+    rgba(200, 160, 80, 0.08) 100%
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: var(--starlight);
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(200, 160, 80, 0.12), inset 0 0 16px rgba(200, 160, 80, 0.06);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+  overflow: hidden;
 }
 
-.landing-chevron:focus-visible {
-  outline: 1px solid var(--celestial);
+.landing-cta-btn:hover {
+  border-color: rgba(200, 160, 80, 0.8);
+  background: linear-gradient(
+    135deg,
+    rgba(200, 160, 80, 0.22) 0%,
+    rgba(136, 136, 204, 0.22) 50%,
+    rgba(200, 160, 80, 0.16) 100%
+  );
+  box-shadow: 0 0 45px rgba(200, 160, 80, 0.28), 0 0 15px rgba(136, 136, 204, 0.3), inset 0 0 20px rgba(200, 160, 80, 0.12);
+}
+
+.landing-cta-btn:focus-visible {
+  outline: 1px solid var(--nova);
   outline-offset: 4px;
-  border-radius: 4px;
+}
+
+.landing-cta-glow {
+  position: absolute;
+  inset: -100%;
+  background: radial-gradient(circle at center, rgba(200, 160, 80, 0.2) 0%, transparent 60%);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: rotateGlow 8s linear infinite;
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.landing-cta-sparkle {
+  color: var(--nova);
+  font-size: 1.1rem;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(200, 160, 80, 0.8);
+  animation: sparklePulse 2.2s ease-in-out infinite;
+}
+
+@keyframes sparklePulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.25); opacity: 1; text-shadow: 0 0 14px rgba(200, 160, 80, 1); }
+}
+
+.landing-cta-text {
+  position: relative;
+  z-index: 1;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.landing-cta-arrow {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  color: var(--nova);
+  transition: transform 0.25s ease;
+}
+
+.landing-cta-btn:hover .landing-cta-arrow {
+  transform: translateX(4px);
+}
+
+.landing-cta-hint {
+  font-size: 0.7rem;
+  color: var(--moonbeam);
+  opacity: 0.45;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
 }
 
 @media (max-width: 767px) {
@@ -445,6 +532,11 @@ h3 {
   padding: 10px 14px;
   transition: border-color 0.25s ease, background 0.25s ease;
   width: 100%;
+}
+
+.birth-form-select.is-placeholder {
+  color: var(--moonbeam);
+  opacity: 0.65;
 }
 
 .birth-form-select:focus,
@@ -780,6 +872,8 @@ h3 {
   position: fixed;
   inset: 0;
   z-index: var(--z-content);
+  overflow: hidden;
+  background: #080816;
 }
 
 .night-sky-canvas {
@@ -789,6 +883,20 @@ h3 {
   height: 100%;
   display: block;
   touch-action: none; /* enables pointer events for panning */
+  animation: celestial-arrival 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes celestial-arrival {
+  from {
+    opacity: 0;
+    filter: brightness(1.35) blur(4px);
+    transform: scale(1.025);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+    transform: scale(1);
+  }
 }
 
 /* HUD overlay */
@@ -818,12 +926,19 @@ h3 {
   font-size: 0.72rem;
   color: var(--moonbeam);
   letter-spacing: 0.1em;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .night-sky-hud-bottom {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+}
+
+.night-sky-hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .night-sky-reset-btn {
@@ -839,12 +954,37 @@ h3 {
   padding: 8px 16px;
   border-radius: 10px;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 
 .night-sky-reset-btn:hover {
   color: var(--starlight);
   border-color: rgba(136, 136, 204, 0.3);
+  background: rgba(30, 30, 64, 0.65);
+  transform: translateY(-1px);
+}
+
+.night-sky-star-hop {
+  pointer-events: all;
+  border: 1px solid rgba(164, 190, 255, 0.28);
+  border-radius: 8px;
+  padding: 6px 11px;
+  background: rgba(10, 12, 34, 0.58);
+  color: rgba(214, 226, 255, 0.78);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 8px 24px rgba(0, 0, 0, 0.16);
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.night-sky-star-hop:hover,
+.night-sky-star-hop.is-active {
+  color: #fff2d7;
+  border-color: rgba(255, 213, 151, 0.66);
+  background: linear-gradient(135deg, rgba(103, 134, 255, 0.28), rgba(210, 159, 96, 0.22));
+  box-shadow: 0 0 20px rgba(150, 182, 255, 0.22), 0 0 30px rgba(255, 191, 121, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.13);
 }
 
 .night-sky-hint {
@@ -865,6 +1005,13 @@ h3 {
   font-size: 0.65rem;
   color: var(--moonbeam);
   letter-spacing: 0.1em;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .night-sky-canvas {
+    animation: none;
+  }
 }
 
 @media (max-width: 767px) {
@@ -874,6 +1021,11 @@ h3 {
 
   .night-sky-hint {
     display: none;
+  }
+
+  .night-sky-star-hop {
+    padding: 6px 8px;
+    font-size: 0.56rem;
   }
 }
 
@@ -936,10 +1088,178 @@ h3 {
 .zodiac-card h2 { color: var(--starlight); font-size: 1.24rem; font-weight: 400; line-height: 1.15; }
 .zodiac-card-description { grid-column: 1 / -1; color: rgba(225, 225, 245, 0.73); font-size: 0.72rem; line-height: 1.65; margin-top: 10px; }
 
-.planetary-positions ul { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 14px; list-style: none; margin-top: 8px; }
-.planetary-positions li { align-items: center; color: var(--moonbeam); display: grid; font-size: 0.68rem; gap: 5px; grid-template-columns: 8px auto 1fr; white-space: nowrap; }
-.planetary-positions strong { color: var(--starlight); font-weight: 400; text-align: right; }
-.planet-dot { border-radius: 50%; box-shadow: 0 0 7px currentColor; height: 6px; width: 6px; }
+/* System Toggle Buttons */
+.system-toggle-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(136, 136, 204, 0.2);
+  border-radius: 6px;
+  color: var(--moonbeam);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  padding: 3px 7px;
+  transition: all 0.2s ease;
+}
+
+.system-toggle-btn:hover {
+  background: rgba(136, 136, 204, 0.15);
+  color: var(--starlight);
+}
+
+.system-toggle-btn.active {
+  background: rgba(200, 160, 80, 0.18);
+  border-color: rgba(200, 160, 80, 0.5);
+  color: #ffd2a1;
+  font-weight: 500;
+}
+
+/* Lagna (Ascendant) Banner */
+.lagna-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(200, 160, 80, 0.1) 0%, rgba(136, 136, 204, 0.08) 100%);
+  border: 1px solid rgba(200, 160, 80, 0.3);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 10px;
+}
+
+.lagna-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lagna-badge {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  background: rgba(200, 160, 80, 0.25);
+  border: 1px solid rgba(200, 160, 80, 0.4);
+  color: #ffe090;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.lagna-title {
+  color: var(--starlight);
+  font-size: 0.8rem;
+  display: block;
+}
+
+.lagna-subtitle {
+  font-size: 0.62rem;
+  color: var(--moonbeam);
+  opacity: 0.8;
+  margin: 1px 0 0;
+}
+
+.lagna-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.58rem;
+  color: var(--moonbeam);
+}
+
+.planetary-positions .planet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  list-style: none;
+  margin-top: 8px;
+  padding: 0;
+}
+
+.planetary-positions .planet-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.72rem;
+  color: var(--moonbeam);
+  transition: background 0.2s ease;
+}
+
+.planetary-positions .planet-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.planet-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.planet-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.planet-name {
+  color: var(--starlight);
+  font-weight: 500;
+  font-size: 0.74rem;
+}
+
+.planet-mag {
+  font-size: 0.6rem;
+  color: var(--celestial);
+  opacity: 0.75;
+}
+
+.planet-house {
+  font-size: 0.6rem;
+  color: rgba(200, 160, 80, 0.85);
+  display: block;
+  margin-top: 1px;
+}
+
+.planet-coord {
+  color: var(--starlight);
+  font-size: 0.68rem;
+}
+
+.retrograde-badge {
+  font-size: 0.56rem;
+  color: #ff9d76;
+  background: rgba(255, 120, 80, 0.15);
+  border: 1px solid rgba(255, 120, 80, 0.3);
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+.dignity-badge {
+  font-size: 0.56rem;
+  color: #ffd2a1;
+  background: rgba(200, 160, 80, 0.15);
+  border: 1px solid rgba(200, 160, 80, 0.3);
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+.planet-badge {
+  font-size: 0.56rem;
+  letter-spacing: 0.04em;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(136, 136, 204, 0.18);
+  border: 1px solid rgba(136, 136, 204, 0.3);
+  color: #cad7ff;
+}
+
+.planet-dot {
+  border-radius: 50%;
+  box-shadow: 0 0 7px currentColor;
+  height: 6px;
+  width: 6px;
+  flex-shrink: 0;
+}
 
 .sky-card-heading { align-items: center; display: flex; justify-content: space-between; }
 .sky-card-heading span { color: var(--nova); font-size: 0.9rem; }
@@ -956,4 +1276,80 @@ h3 {
   .zodiac-card-description { display: none; }
   .night-sky-hud-top { justify-content: flex-end; padding-left: 150px; }
   .night-sky-location { font-size: 0.58rem; padding: 6px 10px; }
+}
+
+/* ---------- SKY INSPECTOR CARD ---------- */
+.sky-inspector-card {
+  background: rgba(10, 10, 26, 0.88);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(200, 160, 80, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 16px rgba(200, 160, 80, 0.18);
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-width: 180px;
+  max-width: 250px;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  will-change: opacity, transform;
+}
+
+.sky-inspector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.sky-inspector-close {
+  background: none;
+  border: none;
+  color: var(--moonbeam);
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 0.8rem;
+  line-height: 1;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.sky-inspector-close:hover {
+  opacity: 1;
+  color: var(--starlight);
+}
+
+.sky-inspector-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nova);
+}
+
+.sky-inspector-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: var(--starlight);
+}
+
+.sky-inspector-desig {
+  font-size: 0.65rem;
+  color: var(--moonbeam);
+  opacity: 0.7;
+  margin-top: 1px;
+}
+
+.sky-inspector-details {
+  font-size: 0.68rem;
+  color: var(--celestial);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dsos-card,
+.meteor-showers-card {
+  border-top: 1px solid rgba(136, 136, 204, 0.16);
+  margin-top: 16px;
+  padding-top: 16px;
 }

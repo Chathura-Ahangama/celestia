@@ -12,9 +12,8 @@ const IRIS_HOLD_DURATION = 400;     // brief darkness before reveal
 
 /* ============================================
    BIRTH FORM — The Celestial Instrument
-   Glass-panel birth data entry with city
-   autocomplete, date/time inputs, and a
-   cinematic submit button.
+   Glass-panel birth data entry with placeholders:
+   2002-10-18 07:53 AM at Kalawana, Sri Lanka
    ============================================ */
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
@@ -29,7 +28,8 @@ const formVariants = {
   },
   exit: {
     opacity: 0,
-    scale: 0.95,
+    y: -30,
+    scale: 0.96,
     transition: { duration: 0.5, ease: EASE_OUT_EXPO },
   },
 };
@@ -50,29 +50,39 @@ function daysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }
 
+const PLACEHOLDER_DATA = {
+  year: 2002,
+  month: 10, // October
+  day: 18,
+  hour: 7,
+  minute: 53,
+  isPM: false, // AM (7:53 AM)
+  city: {
+    name: "Kalawana, Sri Lanka",
+    lat: 6.4253,
+    lon: 80.4072,
+    utcOffset: 5.5,
+  },
+};
+
 interface BirthFormProps {
   onReveal: (data: BirthData) => void;
 }
 
 export default function BirthForm({ onReveal }: BirthFormProps) {
-  // Date
-  const [year, setYear] = useState(1995);
-  const [month, setMonth] = useState(4); // April
-  const [day, setDay] = useState(14);
+  // Date states (initially empty with placeholders)
+  const [year, setYear] = useState<number | "">("");
+  const [month, setMonth] = useState<number | "">("");
+  const [day, setDay] = useState<number | "">("");
 
-  // Time
-  const [hour, setHour] = useState(8);
-  const [minute, setMinute] = useState(30);
+  // Time states (initially empty with placeholders, default AM)
+  const [hour, setHour] = useState<number | "">("");
+  const [minute, setMinute] = useState<number | "">("");
   const [isPM, setIsPM] = useState(false);
 
-  // City
-  const [cityQuery, setCityQuery] = useState("Colombo");
-  const [selectedCity, setSelectedCity] = useState<CityEntry | null>({
-    name: "Colombo, Sri Lanka",
-    lat: 6.9271,
-    lon: 79.8612,
-    utcOffset: 5.5,
-  });
+  // City states (initially empty with placeholder)
+  const [cityQuery, setCityQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState<CityEntry | null>(null);
   const [suggestions, setSuggestions] = useState<CityEntry[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -85,20 +95,25 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
   const [irisOrigin, setIrisOrigin] = useState({ x: 50, y: 50 });
   const submitRef = useRef<HTMLButtonElement>(null);
 
-  // Adjust day if month/year changes
-  const maxDay = daysInMonth(year, month);
-  const effectiveDay = Math.min(day, maxDay);
+  // Effective days in month
+  const activeYear = year === "" ? PLACEHOLDER_DATA.year : year;
+  const activeMonth = month === "" ? PLACEHOLDER_DATA.month : month;
+  const maxDay = daysInMonth(activeYear, activeMonth);
 
-  const handleYearChange = (newYear: number) => {
+  const handleYearChange = (newYear: number | "") => {
     setYear(newYear);
-    const newMax = daysInMonth(newYear, month);
-    if (day > newMax) setDay(newMax);
+    if (newYear !== "" && day !== "") {
+      const newMax = daysInMonth(newYear, activeMonth);
+      if (day > newMax) setDay(newMax);
+    }
   };
 
-  const handleMonthChange = (newMonth: number) => {
+  const handleMonthChange = (newMonth: number | "") => {
     setMonth(newMonth);
-    const newMax = daysInMonth(year, newMonth);
-    if (day > newMax) setDay(newMax);
+    if (newMonth !== "" && day !== "") {
+      const newMax = daysInMonth(activeYear, newMonth);
+      if (day > newMax) setDay(newMax);
+    }
   };
 
   // City search
@@ -138,9 +153,13 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
         setHighlightedIndex((prev) =>
           prev > 0 ? prev - 1 : suggestions.length - 1
         );
-      } else if (e.key === "Enter" && highlightedIndex >= 0) {
+      } else if (e.key === "Enter") {
         e.preventDefault();
-        selectCity(suggestions[highlightedIndex]);
+        if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+          selectCity(suggestions[highlightedIndex]);
+        } else if (suggestions.length > 0) {
+          selectCity(suggestions[0]);
+        }
       } else if (e.key === "Escape") {
         setShowSuggestions(false);
       }
@@ -164,15 +183,36 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Convert 12h → 24h
-  const hour24 = isPM ? (hour === 12 ? 12 : hour + 12) : (hour === 12 ? 0 : hour);
-
-  // Validation
-  const isValid = selectedCity !== null && year > 0 && month > 0 && day > 0;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValid || !selectedCity || irisActive) return;
+    if (irisActive) return;
+
+    // Resolve final effective values
+    const effectiveYear = year === "" ? PLACEHOLDER_DATA.year : year;
+    const effectiveMonth = month === "" ? PLACEHOLDER_DATA.month : month;
+    const effectiveDayNum =
+      day === ""
+        ? PLACEHOLDER_DATA.day
+        : Math.min(day, daysInMonth(effectiveYear, effectiveMonth));
+    const effectiveHour = hour === "" ? PLACEHOLDER_DATA.hour : hour;
+    const effectiveMinute = minute === "" ? PLACEHOLDER_DATA.minute : minute;
+    const effectiveHour24 = isPM
+      ? effectiveHour === 12
+        ? 12
+        : effectiveHour + 12
+      : effectiveHour === 12
+      ? 0
+      : effectiveHour;
+
+    let effectiveCity = selectedCity;
+    if (!effectiveCity) {
+      if (cityQuery.trim() !== "") {
+        const results = searchCities(cityQuery);
+        effectiveCity = results[0] || PLACEHOLDER_DATA.city;
+      } else {
+        effectiveCity = PLACEHOLDER_DATA.city;
+      }
+    }
 
     // Capture button center for iris origin
     if (submitRef.current) {
@@ -182,6 +222,25 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
         y: ((rect.top + rect.height / 2) / window.innerHeight) * 100,
       });
     }
+
+    // Log submission to database asynchronously (non-blocking)
+    fetch("/api/submissions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        year: effectiveYear,
+        month: effectiveMonth,
+        day: effectiveDayNum,
+        hour: effectiveHour24,
+        minute: effectiveMinute,
+        cityName: effectiveCity.name,
+        lat: effectiveCity.lat,
+        lon: effectiveCity.lon,
+        utcOffset: effectiveCity.utcOffset,
+      }),
+    }).catch((err) => {
+      console.warn("[BirthForm] Failed to log submission to database:", err);
+    });
 
     // Start iris sequence
     setIrisActive(true);
@@ -197,271 +256,287 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
     setTimeout(() => {
       setIrisPhase("done");
       onReveal({
-        local: { year, month, day: effectiveDay, hour: hour24, minute },
-        location: { lat: selectedCity.lat, lon: selectedCity.lon },
-        cityName: selectedCity.name,
-        utcOffset: selectedCity.utcOffset,
+        local: {
+          year: effectiveYear,
+          month: effectiveMonth,
+          day: effectiveDayNum,
+          hour: effectiveHour24,
+          minute: effectiveMinute,
+        },
+        location: { lat: effectiveCity.lat, lon: effectiveCity.lon },
+        cityName: effectiveCity.name,
+        utcOffset: effectiveCity.utcOffset,
       });
     }, IRIS_GATHER_DURATION + IRIS_EXPAND_DURATION + IRIS_HOLD_DURATION);
   };
 
   return (
-    <AnimatePresence>
-      <motion.section
-        className="viewport-center"
-        variants={formVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
+    <motion.section
+      className="viewport-center"
+      variants={formVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <form
+        className="glass birth-form"
+        onSubmit={handleSubmit}
+        autoComplete="off"
       >
-        <form
-          className="glass birth-form"
-          onSubmit={handleSubmit}
-          autoComplete="off"
-        >
-          {/* Header */}
-          <h2 className="birth-form-title">When were you born?</h2>
-          <p className="birth-form-subtitle">
-            Enter your birth details and we&apos;ll reconstruct the sky.
-          </p>
+        {/* Header */}
+        <h2 className="birth-form-title">When were you born?</h2>
+        <p className="birth-form-subtitle">
+          Enter your birth details and we&apos;ll reconstruct the sky.
+        </p>
 
-          {/* ── Date Row ── */}
-          <div className="birth-form-group">
-            <label className="birth-form-label">Date of Birth</label>
-            <div className="birth-form-row birth-form-date-row">
-              <div className="birth-form-field">
-                <span className="birth-form-field-label">Year</span>
-                <select
-                  id="birth-year"
-                  className="birth-form-select"
-                  value={year}
-                  onChange={(e) => handleYearChange(Number(e.target.value))}
-                >
-                  {YEARS.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="birth-form-field">
-                <span className="birth-form-field-label">Month</span>
-                <select
-                  id="birth-month"
-                  className="birth-form-select"
-                  value={month}
-                  onChange={(e) => handleMonthChange(Number(e.target.value))}
-                >
-                  {MONTHS.map((m, i) => (
-                    <option key={i} value={i + 1}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="birth-form-field">
-                <span className="birth-form-field-label">Day</span>
-                <select
-                  id="birth-day"
-                  className="birth-form-select"
-                  value={effectiveDay}
-                  onChange={(e) => setDay(Number(e.target.value))}
-                >
-                  {Array.from({ length: maxDay }, (_, i) => i + 1).map(
-                    (d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Time Row ── */}
-          <div className="birth-form-group">
-            <label className="birth-form-label">Time of Birth</label>
-            <div className="birth-form-row birth-form-time-row">
-              <div className="birth-form-field">
-                <span className="birth-form-field-label">Hour</span>
-                <select
-                  id="birth-hour"
-                  className="birth-form-select"
-                  value={hour}
-                  onChange={(e) => setHour(Number(e.target.value))}
-                >
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
-                    <option key={h} value={h}>
-                      {h}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <span className="birth-form-colon">:</span>
-
-              <div className="birth-form-field">
-                <span className="birth-form-field-label">Min</span>
-                <select
-                  id="birth-minute"
-                  className="birth-form-select"
-                  value={minute}
-                  onChange={(e) => setMinute(Number(e.target.value))}
-                >
-                  {Array.from({ length: 60 }, (_, i) => i).map((m) => (
-                    <option key={m} value={m}>
-                      {String(m).padStart(2, "0")}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="birth-form-ampm">
-                <button
-                  type="button"
-                  className={`birth-form-ampm-btn ${!isPM ? "active" : ""}`}
-                  onClick={() => setIsPM(false)}
-                >
-                  AM
-                </button>
-                <button
-                  type="button"
-                  className={`birth-form-ampm-btn ${isPM ? "active" : ""}`}
-                  onClick={() => setIsPM(true)}
-                >
-                  PM
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* ── City ── */}
-          <div className="birth-form-group">
-            <label className="birth-form-label" htmlFor="birth-city">
-              Birth City
-            </label>
-            <div className="birth-form-city-wrapper">
-              <input
-                ref={cityInputRef}
-                id="birth-city"
-                type="text"
-                role="combobox"
-                className="birth-form-input"
-                value={cityQuery}
-                onChange={(e) => handleCityChange(e.target.value)}
-                onFocus={() => {
-                  if (suggestions.length > 0) setShowSuggestions(true);
-                }}
-                onKeyDown={handleCityKeyDown}
-                placeholder="Search for a city…"
-                aria-autocomplete="list"
-                aria-expanded={showSuggestions}
-                aria-controls="city-suggestions"
-                autoComplete="off"
-              />
-
-              {/* Autocomplete dropdown */}
-              {showSuggestions && (
-                <ul
-                  ref={suggestionsRef}
-                  id="city-suggestions"
-                  className="birth-form-suggestions"
-                  role="listbox"
-                >
-                  {suggestions.map((city, i) => (
-                    <li
-                      key={city.name}
-                      className={`birth-form-suggestion ${
-                        i === highlightedIndex ? "highlighted" : ""
-                      }`}
-                      role="option"
-                      aria-selected={i === highlightedIndex}
-                      onMouseEnter={() => setHighlightedIndex(i)}
-                      onMouseDown={(e) => {
-                        e.preventDefault(); // prevent blur before click
-                        selectCity(city);
-                      }}
-                    >
-                      <span className="suggestion-name">{city.name}</span>
-                      <span className="suggestion-meta">
-                        UTC{city.utcOffset >= 0 ? "+" : ""}
-                        {city.utcOffset}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Selected city confirmation */}
-            {selectedCity && (
-              <p className="birth-form-city-confirm">
-                📍 {selectedCity.name} — UTC
-                {selectedCity.utcOffset >= 0 ? "+" : ""}
-                {selectedCity.utcOffset}
-              </p>
-            )}
-          </div>
-
-          {/* ── Submit ── */}
-          <button
-            ref={submitRef}
-            type="submit"
-            className={`birth-form-submit ${irisActive ? "iris-active" : ""}`}
-            disabled={!isValid || irisActive}
-          >
-            {/* SVG ring for the gather animation */}
-            <svg
-              className="birth-form-submit-ring"
-              viewBox="0 0 200 52"
-              preserveAspectRatio="none"
-            >
-              <rect
-                x="1" y="1" width="198" height="50"
-                rx="14" ry="14"
-                fill="none"
-                stroke="var(--nova)"
-                strokeWidth="2"
-                className="iris-ring-path"
-              />
-            </svg>
-            <span className="birth-form-submit-text">
-              {irisActive ? "Aligning the stars…" : "Reveal My Sky"}
-            </span>
-            {!irisActive && (
-              <svg
-                className="birth-form-submit-icon"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        {/* ── Date Row ── */}
+        <div className="birth-form-group">
+          <label className="birth-form-label">Date of Birth</label>
+          <div className="birth-form-row birth-form-date-row">
+            <div className="birth-form-field">
+              <span className="birth-form-field-label">Year</span>
+              <select
+                id="birth-year"
+                className={`birth-form-select ${year === "" ? "is-placeholder" : ""}`}
+                value={year}
+                onChange={(e) =>
+                  handleYearChange(
+                    e.target.value === "" ? "" : Number(e.target.value)
+                  )
+                }
               >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 8v8M8 12l4 4 4-4" />
-              </svg>
-            )}
-          </button>
-        </form>
+                <option value="" disabled hidden>
+                  2002
+                </option>
+                {YEARS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* ── Iris aperture overlay ── */}
-        {irisActive && (
-          <div
-            className={`iris-overlay iris-${irisPhase}`}
-            style={{
+            <div className="birth-form-field">
+              <span className="birth-form-field-label">Month</span>
+              <select
+                id="birth-month"
+                className={`birth-form-select ${month === "" ? "is-placeholder" : ""}`}
+                value={month}
+                onChange={(e) =>
+                  handleMonthChange(
+                    e.target.value === "" ? "" : Number(e.target.value)
+                  )
+                }
+              >
+                <option value="" disabled hidden>
+                  October
+                </option>
+                {MONTHS.map((m, i) => (
+                  <option key={i} value={i + 1}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="birth-form-field">
+              <span className="birth-form-field-label">Day</span>
+              <select
+                id="birth-day"
+                className={`birth-form-select ${day === "" ? "is-placeholder" : ""}`}
+                value={day}
+                onChange={(e) =>
+                  setDay(e.target.value === "" ? "" : Number(e.target.value))
+                }
+              >
+                <option value="" disabled hidden>
+                  18
+                </option>
+                {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Time Row ── */}
+        <div className="birth-form-group">
+          <label className="birth-form-label">Time of Birth</label>
+          <div className="birth-form-row birth-form-time-row">
+            <div className="birth-form-field">
+              <span className="birth-form-field-label">Hour</span>
+              <select
+                id="birth-hour"
+                className={`birth-form-select ${hour === "" ? "is-placeholder" : ""}`}
+                value={hour}
+                onChange={(e) =>
+                  setHour(e.target.value === "" ? "" : Number(e.target.value))
+                }
+              >
+                <option value="" disabled hidden>
+                  07
+                </option>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <span className="birth-form-colon">:</span>
+
+            <div className="birth-form-field">
+              <span className="birth-form-field-label">Min</span>
+              <select
+                id="birth-minute"
+                className={`birth-form-select ${minute === "" ? "is-placeholder" : ""}`}
+                value={minute}
+                onChange={(e) =>
+                  setMinute(e.target.value === "" ? "" : Number(e.target.value))
+                }
+              >
+                <option value="" disabled hidden>
+                  53
+                </option>
+                {Array.from({ length: 60 }, (_, i) => i).map((m) => (
+                  <option key={m} value={m}>
+                    {String(m).padStart(2, "0")}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="birth-form-ampm">
+              <button
+                type="button"
+                className={`birth-form-ampm-btn ${!isPM ? "active" : ""}`}
+                onClick={() => setIsPM(false)}
+              >
+                AM
+              </button>
+              <button
+                type="button"
+                className={`birth-form-ampm-btn ${isPM ? "active" : ""}`}
+                onClick={() => setIsPM(true)}
+              >
+                PM
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── City ── */}
+        <div className="birth-form-group">
+          <label className="birth-form-label" htmlFor="birth-city">
+            Birth City
+          </label>
+          <div className="birth-form-city-wrapper">
+            <input
+              ref={cityInputRef}
+              id="birth-city"
+              type="text"
+              role="combobox"
+              className="birth-form-input"
+              value={cityQuery}
+              onChange={(e) => handleCityChange(e.target.value)}
+              onFocus={() => {
+                if (suggestions.length > 0) setShowSuggestions(true);
+              }}
+              onKeyDown={handleCityKeyDown}
+              placeholder="e.g. Kalawana, Sri Lanka"
+              aria-autocomplete="list"
+              aria-expanded={showSuggestions}
+              aria-controls="city-suggestions"
+              autoComplete="off"
+            />
+
+            {/* Autocomplete dropdown */}
+            {showSuggestions && (
+              <ul
+                ref={suggestionsRef}
+                id="city-suggestions"
+                className="birth-form-suggestions"
+                role="listbox"
+              >
+                {suggestions.map((city, i) => (
+                  <li
+                    key={city.name}
+                    className={`birth-form-suggestion ${
+                      i === highlightedIndex ? "highlighted" : ""
+                    }`}
+                    role="option"
+                    aria-selected={i === highlightedIndex}
+                    onClick={() => selectCity(city)}
+                    onMouseEnter={() => setHighlightedIndex(i)}
+                  >
+                    <span className="suggestion-name">{city.name}</span>
+                    <span className="suggestion-meta">
+                      {city.lat.toFixed(2)}°, {city.lon.toFixed(2)}° · UTC
+                      {city.utcOffset >= 0
+                        ? `+${city.utcOffset}`
+                        : city.utcOffset}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {selectedCity && (
+            <p className="birth-form-city-confirm mono">
+              ✓ {selectedCity.name} (UTC
+              {selectedCity.utcOffset >= 0
+                ? `+${selectedCity.utcOffset}`
+                : selectedCity.utcOffset}
+              )
+            </p>
+          )}
+        </div>
+
+        {/* ── Submit Button with Iris Ring ── */}
+        <button
+          ref={submitRef}
+          type="submit"
+          className={`birth-form-submit ${irisActive ? "iris-active" : ""}`}
+          disabled={irisActive}
+        >
+          {/* SVG ring for the gathering animation */}
+          <svg className="birth-form-submit-ring" viewBox="0 0 400 60">
+            <rect
+              className="iris-ring-path"
+              x="2"
+              y="2"
+              width="396"
+              height="56"
+              rx="12"
+              fill="none"
+              stroke="var(--nova)"
+              strokeWidth="2"
+            />
+          </svg>
+
+          <span className="birth-form-submit-text">Reconstruct Sky</span>
+          <span className="birth-form-submit-icon" aria-hidden="true">
+            ✦
+          </span>
+        </button>
+      </form>
+
+      {/* ── Full-screen Iris Aperture Overlay ── */}
+      {irisActive && (
+        <div
+          className={`iris-overlay iris-${irisPhase}`}
+          style={
+            {
               "--iris-x": `${irisOrigin.x}%`,
               "--iris-y": `${irisOrigin.y}%`,
-            } as React.CSSProperties}
-            aria-hidden="true"
-          />
-        )}
-      </motion.section>
-    </AnimatePresence>
+            } as React.CSSProperties
+          }
+        />
+      )}
+    </motion.section>
   );
 }

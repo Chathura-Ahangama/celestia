@@ -1,14 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 /* ============================================
-   LANDING HERO — Cinematic title reveal
+   LANDING HERO — Cinematic Title & CTA Reveal
    - Staggered letter-by-letter "CELESTIA" reveal
    - Subtitle fade-in after title completes
-   - Breathing chevron scroll indicator
-   - Click or scroll-down triggers onContinue
+   - Luminous "Reveal Your Sky" call-to-action button
+   - Click, Enter key, or scroll-down triggers onContinue
    ============================================ */
 
 const TITLE = "CELESTIA";
@@ -27,8 +27,10 @@ const containerVariants = {
   },
   exit: {
     opacity: 0,
-    y: -30,
-    transition: { duration: 0.6, ease: EASE_OUT_EXPO },
+    y: -40,
+    scale: 0.97,
+    filter: "blur(4px)",
+    transition: { duration: 0.7, ease: EASE_OUT_EXPO },
   },
 };
 
@@ -50,25 +52,28 @@ const letterVariants = {
 };
 
 const subtitleVariants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 1.2,
       ease: EASE_OUT_EXPO,
-      delay: TITLE.length * 0.12 + 0.8, // after all letters + pause
+      delay: TITLE.length * 0.12 + 0.8,
     },
   },
 };
 
-const chevronVariants = {
-  hidden: { opacity: 0 },
+const buttonVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.94 },
   visible: {
     opacity: 1,
+    y: 0,
+    scale: 1,
     transition: {
-      duration: 0.8,
-      delay: TITLE.length * 0.12 + 1.6, // after subtitle
+      duration: 1.0,
+      ease: EASE_OUT_EXPO,
+      delay: TITLE.length * 0.12 + 1.3,
     },
   },
 };
@@ -106,7 +111,7 @@ export default function LandingHero({ onContinue }: LandingHeroProps) {
     [onContinue]
   );
 
-  // Keyboard: Enter or ArrowDown
+  // Keyboard: Enter or ArrowDown or Space
   const handleKey = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === "ArrowDown" || e.key === " ") {
@@ -132,61 +137,72 @@ export default function LandingHero({ onContinue }: LandingHeroProps) {
   }, [handleWheel, handleTouchStart, handleTouchEnd, handleKey]);
 
   return (
-    <AnimatePresence>
-      <motion.section
-        ref={sectionRef}
-        className="viewport-center landing-hero"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        role="banner"
-        aria-label="Celestia — landing"
-      >
-        {/* Title: letter-by-letter reveal */}
-        <h1 className="landing-title" aria-label={TITLE}>
-          {TITLE.split("").map((char, i) => (
-            <motion.span
-              key={i}
-              className="landing-letter"
-              variants={letterVariants}
-              aria-hidden="true"
-            >
-              {char}
-            </motion.span>
-          ))}
-        </h1>
-
-        {/* Subtitle */}
-        <motion.p
-          className="landing-subtitle"
-          variants={subtitleVariants}
-        >
-          {SUBTITLE}
-        </motion.p>
-
-        {/* Breathing chevron — clickable scroll hint */}
-        <motion.button
-          className="landing-chevron"
-          variants={chevronVariants}
-          onClick={onContinue}
-          aria-label="Continue to birth form"
-          tabIndex={0}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+    <motion.section
+      ref={sectionRef}
+      className="viewport-center landing-hero"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      role="banner"
+      aria-label="Celestia — landing"
+    >
+      {/* Title: letter-by-letter reveal */}
+      <h1 className="landing-title" aria-label={TITLE}>
+        {TITLE.split("").map((char, i) => (
+          <motion.span
+            key={i}
+            className="landing-letter"
+            variants={letterVariants}
+            aria-hidden="true"
           >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+            {char}
+          </motion.span>
+        ))}
+      </h1>
+
+      {/* Subtitle */}
+      <motion.p
+        className="landing-subtitle"
+        variants={subtitleVariants}
+      >
+        {SUBTITLE}
+      </motion.p>
+
+      {/* Luminous Call To Action Button */}
+      <motion.div
+        className="landing-cta-container"
+        variants={buttonVariants}
+      >
+        <motion.button
+          className="landing-cta-btn"
+          onClick={onContinue}
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.97 }}
+          tabIndex={0}
+          aria-label="Reveal your birth sky"
+        >
+          <span className="landing-cta-glow" aria-hidden="true" />
+          <span className="landing-cta-sparkle" aria-hidden="true">✦</span>
+          <span className="landing-cta-text">Reveal Your Sky</span>
+          <span className="landing-cta-arrow" aria-hidden="true">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </span>
         </motion.button>
-      </motion.section>
-    </AnimatePresence>
+        <p className="landing-cta-hint mono">or scroll to begin</p>
+      </motion.div>
+    </motion.section>
   );
 }

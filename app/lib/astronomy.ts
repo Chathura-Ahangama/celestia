@@ -193,23 +193,28 @@ export function localSiderealTime(jd: number, lonDeg: number): number {
   return normalizeDeg(greenwichMeanSiderealTime(jd) + lonDeg);
 }
 
-// ============================================
-// D. COORDINATE TRANSFORM: Equatorial → Horizontal
-// ============================================
+/**
+ * Atmospheric refraction correction (Meeus standard formula).
+ * Returns apparent altitude in degrees given true geometric altitude in degrees.
+ * At the horizon (alt = 0), refraction lifts objects by ~34 arcminutes (~0.57°).
+ */
+export function trueToApparentAltitude(altDeg: number): number {
+  if (altDeg < -1.0) return altDeg;
+  const h = Math.max(altDeg, -0.5);
+  const rArcmin = 1.02 / Math.tan((h + 10.3 / (h + 5.11)) * DEG2RAD);
+  return altDeg + rArcmin / 60;
+}
 
 /**
  * Convert equatorial (RA/Dec) to horizontal (Alt/Az) for an observer.
  * All inputs/outputs in degrees.
- *
- * HA  = LST - RA
- * Alt = arcsin( sinDec sinLat + cosDec cosLat cosHA )
- * Az  = atan2( -sinHA cosDec , cosDec sinLat cosHA - sinDec cosLat )
- * Az normalized to 0=N, 90=E, 180=S, 270=W.
+ * Includes atmospheric refraction for apparent visual realism.
  */
 export function equatorialToHorizontal(
   eq: EquatorialCoord,
   location: GeoLocation,
   jd: number,
+  applyRefraction = true,
 ): HorizontalCoord {
   const lst = localSiderealTime(jd, location.lon); // degrees
   const ha = normalizeDeg(lst - eq.ra); // hour angle, degrees
@@ -217,7 +222,11 @@ export function equatorialToHorizontal(
   const lat = location.lat;
 
   const sinAlt = sind(eq.dec) * sind(lat) + cosd(eq.dec) * cosd(lat) * cosd(ha);
-  const alt = asind(Math.max(-1, Math.min(1, sinAlt)));
+  let alt = asind(Math.max(-1, Math.min(1, sinAlt)));
+
+  if (applyRefraction && alt > -1.0) {
+    alt = trueToApparentAltitude(alt);
+  }
 
   const az = normalizeDeg(
     atan2d(
@@ -227,6 +236,24 @@ export function equatorialToHorizontal(
   );
 
   return { alt, az };
+}
+
+/** Generate points along the Ecliptic plane in equatorial coordinates */
+export function getEclipticCurve(jd: number, stepDeg = 5): EquatorialCoord[] {
+  const pts: EquatorialCoord[] = [];
+  for (let lon = 0; lon <= 360; lon += stepDeg) {
+    pts.push(eclipticToEquatorial({ lon, lat: 0 }, jd));
+  }
+  return pts;
+}
+
+/** Generate points along the Celestial Equator in equatorial coordinates */
+export function getCelestialEquatorCurve(stepDeg = 5): EquatorialCoord[] {
+  const pts: EquatorialCoord[] = [];
+  for (let ra = 0; ra <= 360; ra += stepDeg) {
+    pts.push({ ra, dec: 0 });
+  }
+  return pts;
 }
 
 // ============================================
