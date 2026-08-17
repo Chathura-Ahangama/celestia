@@ -87,9 +87,19 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
 
   // Adjust day if month/year changes
   const maxDay = daysInMonth(year, month);
-  useEffect(() => {
-    if (day > maxDay) setDay(maxDay);
-  }, [year, month, day, maxDay]);
+  const effectiveDay = Math.min(day, maxDay);
+
+  const handleYearChange = (newYear: number) => {
+    setYear(newYear);
+    const newMax = daysInMonth(newYear, month);
+    if (day > newMax) setDay(newMax);
+  };
+
+  const handleMonthChange = (newMonth: number) => {
+    setMonth(newMonth);
+    const newMax = daysInMonth(year, newMonth);
+    if (day > newMax) setDay(newMax);
+  };
 
   // City search
   const handleCityChange = useCallback((value: string) => {
@@ -187,7 +197,7 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
     setTimeout(() => {
       setIrisPhase("done");
       onReveal({
-        local: { year, month, day, hour: hour24, minute },
+        local: { year, month, day: effectiveDay, hour: hour24, minute },
         location: { lat: selectedCity.lat, lon: selectedCity.lon },
         cityName: selectedCity.name,
         utcOffset: selectedCity.utcOffset,
@@ -225,7 +235,7 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
                   id="birth-year"
                   className="birth-form-select"
                   value={year}
-                  onChange={(e) => setYear(Number(e.target.value))}
+                  onChange={(e) => handleYearChange(Number(e.target.value))}
                 >
                   {YEARS.map((y) => (
                     <option key={y} value={y}>
@@ -241,7 +251,7 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
                   id="birth-month"
                   className="birth-form-select"
                   value={month}
-                  onChange={(e) => setMonth(Number(e.target.value))}
+                  onChange={(e) => handleMonthChange(Number(e.target.value))}
                 >
                   {MONTHS.map((m, i) => (
                     <option key={i} value={i + 1}>
@@ -256,7 +266,7 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
                 <select
                   id="birth-day"
                   className="birth-form-select"
-                  value={day}
+                  value={effectiveDay}
                   onChange={(e) => setDay(Number(e.target.value))}
                 >
                   {Array.from({ length: maxDay }, (_, i) => i + 1).map(
@@ -338,6 +348,7 @@ export default function BirthForm({ onReveal }: BirthFormProps) {
                 ref={cityInputRef}
                 id="birth-city"
                 type="text"
+                role="combobox"
                 className="birth-form-input"
                 value={cityQuery}
                 onChange={(e) => handleCityChange(e.target.value)}

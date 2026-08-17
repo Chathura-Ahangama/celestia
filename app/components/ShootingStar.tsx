@@ -34,7 +34,7 @@ export default function ShootingStar() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef(0);
   const meteorsRef = useRef<Meteor[]>([]);
-  const nextSpawnRef = useRef(performance.now() + 2000); // first one after 2s
+  const nextSpawnRef = useRef(0);
 
   const spawnMeteor = useCallback((now: number, w: number, h: number) => {
     // Spawn from top edge or right edge
@@ -65,6 +65,7 @@ export default function ShootingStar() {
   }, []);
 
   useEffect(() => {
+    nextSpawnRef.current = performance.now() + 2000;
     const canvas = canvasRef.current;
     if (!canvas) return;
 

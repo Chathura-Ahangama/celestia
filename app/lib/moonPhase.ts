@@ -5,15 +5,12 @@
    ============================================ */
 
 import {
-  DEG2RAD,
   RAD2DEG,
   normalizeDeg,
   sind,
   cosd,
-  asind,
   atan2d,
   julianCenturies,
-  obliquityOfEcliptic,
   sunEclipticLongitude,
   eclipticToEquatorial,
   type EquatorialCoord,

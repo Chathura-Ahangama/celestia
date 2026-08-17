@@ -6,6 +6,8 @@ import StarField from "./components/StarField";
 import ShootingStar from "./components/ShootingStar";
 import LandingHero from "./components/LandingHero";
 import BirthForm from "./components/BirthForm";
+import CosmicReveal from "./components/CosmicReveal";
+import NightSkyCanvas from "./components/NightSkyCanvas";
 
 /* ============================================
    APP PHASES
@@ -68,91 +70,20 @@ export default function Home() {
 
         {phase === "form" && <BirthForm onReveal={handleReveal} />}
 
-        {(phase === "revealing" || phase === "explore") && birthData && (
-          <RevealPlaceholder
+        {/* Cinematic reveal sequence */}
+        {phase === "revealing" && birthData && (
+          <CosmicReveal
             birthData={birthData}
-            phase={phase}
             onComplete={handleRevealComplete}
-            onReset={reset}
           />
+        )}
+
+        {/* Interactive sky */}
+        {phase === "explore" && birthData && (
+          <NightSkyCanvas birthData={birthData} onReset={reset} />
         )}
       </div>
     </main>
   );
 }
 
-/* ============================================
-   TEMPORARY PLACEHOLDERS
-   These get replaced with real components in later steps.
-   They exist so the app compiles & you can test the flow NOW.
-   ============================================ */
-
-function RevealPlaceholder({
-  birthData,
-  phase,
-  onComplete,
-  onReset,
-}: {
-  birthData: BirthData;
-  phase: AppPhase;
-  onComplete: () => void;
-  onReset: () => void;
-}) {
-  return (
-    <section className="viewport-center">
-      <h2
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "1.8rem",
-          letterSpacing: "0.15em",
-          marginBottom: "var(--space-3)",
-        }}
-      >
-        {phase === "revealing" ? "Revealing…" : "Your Sky"}
-      </h2>
-
-      <p className="mono" style={{ marginBottom: "var(--space-2)" }}>
-        {birthData.cityName}
-      </p>
-      <p className="mono" style={{ marginBottom: "var(--space-4)" }}>
-        {birthData.local.year}-{String(birthData.local.month).padStart(2, "0")}-
-        {String(birthData.local.day).padStart(2, "0")}{" "}
-        {String(birthData.local.hour).padStart(2, "0")}:
-        {String(birthData.local.minute).padStart(2, "0")} (UTC
-        {birthData.utcOffset >= 0 ? "+" : ""}
-        {birthData.utcOffset})
-      </p>
-
-      {phase === "revealing" && (
-        <button
-          onClick={onComplete}
-          style={{
-            background: "transparent",
-            border: "1px solid var(--glass-border)",
-            color: "var(--celestial)",
-            padding: "var(--space-1) var(--space-3)",
-            borderRadius: "999px",
-            cursor: "pointer",
-            marginBottom: "var(--space-2)",
-          }}
-        >
-          Skip → Explore
-        </button>
-      )}
-
-      <button
-        onClick={onReset}
-        style={{
-          background: "transparent",
-          border: "none",
-          color: "var(--moonbeam)",
-          cursor: "pointer",
-          fontSize: "0.85rem",
-          letterSpacing: "0.1em",
-        }}
-      >
-        ← Start over
-      </button>
-    </section>
-  );
-}

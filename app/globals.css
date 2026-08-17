@@ -725,3 +725,235 @@ h3 {
   opacity: 1;
   clip-path: circle(150% at var(--iris-x) var(--iris-y));
 }
+
+/* ---------- COSMIC REVEAL ---------- */
+.cosmic-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+}
+
+.cosmic-reveal-ui {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-overlay) + 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.cosmic-reveal-status {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--moonbeam);
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+  animation: fadeIn 0.5s ease;
+}
+
+.cosmic-reveal-skip {
+  pointer-events: all;
+  background: none;
+  border: 1px solid var(--glass-border);
+  color: var(--moonbeam);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  padding: 6px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.cosmic-reveal-skip:hover {
+  opacity: 1;
+  color: var(--starlight);
+}
+
+/* ---------- NIGHT SKY CANVAS ---------- */
+.night-sky-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-content);
+}
+
+.night-sky-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none; /* enables pointer events for panning */
+}
+
+/* HUD overlay */
+.night-sky-hud {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-content) + 1);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-3);
+}
+
+.night-sky-hud-top {
+  display: flex;
+  justify-content: center;
+}
+
+.night-sky-location {
+  background: rgba(10, 10, 26, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  font-size: 0.72rem;
+  color: var(--moonbeam);
+  letter-spacing: 0.1em;
+}
+
+.night-sky-hud-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.night-sky-reset-btn {
+  pointer-events: all;
+  background: rgba(10, 10, 26, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  color: var(--moonbeam);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.night-sky-reset-btn:hover {
+  color: var(--starlight);
+  border-color: rgba(136, 136, 204, 0.3);
+}
+
+.night-sky-hint {
+  font-size: 0.65rem;
+  color: var(--moonbeam);
+  opacity: 0.4;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.night-sky-zoom {
+  background: rgba(10, 10, 26, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  font-size: 0.65rem;
+  color: var(--moonbeam);
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 767px) {
+  .night-sky-hud {
+    padding: var(--space-2);
+  }
+
+  .night-sky-hint {
+    display: none;
+  }
+}
+
+/* ---------- BIRTH SKY INFORMATION PANEL ---------- */
+.sky-info-panel {
+  position: fixed;
+  z-index: calc(var(--z-content) + 2);
+  top: var(--space-3);
+  left: var(--space-3);
+  width: min(350px, calc(100vw - 2 * var(--space-3)));
+  max-height: calc(100dvh - 116px);
+  pointer-events: none;
+}
+
+.sky-info-panel-scroll {
+  pointer-events: auto;
+  max-height: inherit;
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  background: rgba(10, 10, 26, 0.62);
+  backdrop-filter: blur(20px) saturate(1.1);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
+  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35);
+}
+
+.sky-info-title-row h1 {
+  font-size: 1.45rem;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--starlight);
+}
+
+.sky-card-kicker {
+  color: var(--celestial);
+  font-family: var(--font-mono);
+  font-size: 0.59rem;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.moon-renderer,
+.zodiac-card,
+.planetary-positions,
+.constellation-map {
+  border-top: 1px solid rgba(136, 136, 204, 0.16);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.moon-renderer { display: flex; align-items: center; gap: 12px; }
+.moon-renderer-orb { width: 62px; height: 62px; flex: 0 0 auto; }
+.moon-renderer-name { color: var(--starlight); font-family: var(--font-display); font-size: 1.18rem; line-height: 1.25; }
+.moon-renderer-meta, .zodiac-card-traits { color: var(--moonbeam); font-size: 0.7rem; letter-spacing: 0.04em; }
+
+.zodiac-card { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; }
+.zodiac-card-symbol { align-self: center; color: var(--element-color); font-family: var(--font-display); font-size: 2.6rem; line-height: 1; text-shadow: 0 0 16px color-mix(in srgb, var(--element-color) 40%, transparent); }
+.zodiac-card h2 { color: var(--starlight); font-size: 1.24rem; font-weight: 400; line-height: 1.15; }
+.zodiac-card-description { grid-column: 1 / -1; color: rgba(225, 225, 245, 0.73); font-size: 0.72rem; line-height: 1.65; margin-top: 10px; }
+
+.planetary-positions ul { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 14px; list-style: none; margin-top: 8px; }
+.planetary-positions li { align-items: center; color: var(--moonbeam); display: grid; font-size: 0.68rem; gap: 5px; grid-template-columns: 8px auto 1fr; white-space: nowrap; }
+.planetary-positions strong { color: var(--starlight); font-weight: 400; text-align: right; }
+.planet-dot { border-radius: 50%; box-shadow: 0 0 7px currentColor; height: 6px; width: 6px; }
+
+.sky-card-heading { align-items: center; display: flex; justify-content: space-between; }
+.sky-card-heading span { color: var(--nova); font-size: 0.9rem; }
+.sky-layer-toggles { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.sky-layer-toggle, .sky-icon-button { background: rgba(255, 255, 255, 0.035); border: 1px solid var(--glass-border); border-radius: 999px; color: var(--moonbeam); cursor: pointer; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.06em; padding: 7px 10px; transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+.sky-layer-toggle.active, .sky-layer-toggle:hover, .sky-icon-button:hover { background: rgba(136, 136, 204, 0.14); border-color: rgba(136, 136, 204, 0.44); color: var(--starlight); }
+.sky-info-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+.sky-icon-button { align-items: center; display: inline-flex; gap: 6px; }
+.sky-icon-button span { color: var(--nova); font-size: 0.9rem; line-height: 0; }
+
+@media (max-width: 767px) {
+  .sky-info-panel { bottom: 60px; left: var(--space-2); max-height: min(43dvh, 370px); top: auto; width: min(350px, calc(100vw - 2 * var(--space-2))); }
+  .sky-info-panel-scroll { padding: 15px; }
+  .zodiac-card-description { display: none; }
+  .night-sky-hud-top { justify-content: flex-end; padding-left: 150px; }
+  .night-sky-location { font-size: 0.58rem; padding: 6px 10px; }
+}
